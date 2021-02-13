@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>diffjson.searchpath package &mdash; src  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="diffjson package" href="diffjson.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> src
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="diffjson.html">diffjson package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="diffjson.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">diffjson.searchpath package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-diffjson.searchpath.exceptions">diffjson.searchpath.exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-diffjson.searchpath.lex">diffjson.searchpath.lex module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-diffjson.searchpath.parse">diffjson.searchpath.parse module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-diffjson.searchpath.pathtypes">diffjson.searchpath.pathtypes module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-diffjson.searchpath">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="diffjson.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="diffjson.html#diffjson-branch-module">diffjson.branch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="diffjson.html#diffjson-diff-module">diffjson.diff module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="diffjson.html#module-diffjson.exceptions">diffjson.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="diffjson.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">src</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="diffjson.html">diffjson package</a> &raquo;</li>
+        
+      <li>diffjson.searchpath package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/diffjson.searchpath.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="diffjson-searchpath-package">
+<h1>diffjson.searchpath package<a class="headerlink" href="#diffjson-searchpath-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-diffjson.searchpath.exceptions">
+<span id="diffjson-searchpath-exceptions-module"></span><h2>diffjson.searchpath.exceptions module<a class="headerlink" href="#module-diffjson.searchpath.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="py exception">
+<dt id="diffjson.searchpath.exceptions.LocationPathFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">diffjson.searchpath.exceptions.</code><code class="sig-name descname">LocationPathFormatError</code><a class="reference internal" href="_modules/diffjson/searchpath/exceptions.html#LocationPathFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.exceptions.LocationPathFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="diffjson.searchpath.exceptions.LocationStepFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">diffjson.searchpath.exceptions.</code><code class="sig-name descname">LocationStepFormatError</code><a class="reference internal" href="_modules/diffjson/searchpath/exceptions.html#LocationStepFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.exceptions.LocationStepFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="diffjson.searchpath.exceptions.NodenameFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">diffjson.searchpath.exceptions.</code><code class="sig-name descname">NodenameFormatError</code><a class="reference internal" href="_modules/diffjson/searchpath/exceptions.html#NodenameFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.exceptions.NodenameFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="diffjson.searchpath.exceptions.PredicateFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">diffjson.searchpath.exceptions.</code><code class="sig-name descname">PredicateFormatError</code><a class="reference internal" href="_modules/diffjson/searchpath/exceptions.html#PredicateFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.exceptions.PredicateFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="diffjson.searchpath.exceptions.PredicatesFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">diffjson.searchpath.exceptions.</code><code class="sig-name descname">PredicatesFormatError</code><a class="reference internal" href="_modules/diffjson/searchpath/exceptions.html#PredicatesFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.exceptions.PredicatesFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-diffjson.searchpath.lex">
+<span id="diffjson-searchpath-lex-module"></span><h2>diffjson.searchpath.lex module<a class="headerlink" href="#module-diffjson.searchpath.lex" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="diffjson.searchpath.lex.t_error">
+<code class="sig-prename descclassname">diffjson.searchpath.lex.</code><code class="sig-name descname">t_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">t</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/lex.html#t_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.lex.t_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-diffjson.searchpath.parse">
+<span id="diffjson-searchpath-parse-module"></span><h2>diffjson.searchpath.parse module<a class="headerlink" href="#module-diffjson.searchpath.parse" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_error">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_error</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_indexlocationstep_index">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_indexlocationstep_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_indexlocationstep_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_indexlocationstep_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>indexlocationstep : nodenameindex</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_indexlocationstep_indexwithpredicates">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_indexlocationstep_indexwithpredicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_indexlocationstep_indexwithpredicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_indexlocationstep_indexwithpredicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>indexlocationstep : nodenameindex ‘[‘ predicates ‘]’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationpath_endwithdslash">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationpath_endwithdslash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationpath_endwithdslash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationpath_endwithdslash" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationpath : locationsteps separator</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationpath_forpredicates">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationpath_forpredicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationpath_forpredicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationpath_forpredicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationpath : locationsteps</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationpath_separator">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationpath_separator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationpath_separator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationpath_separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationpath : separator locationsteps</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationpath_separatorhonly">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationpath_separatorhonly</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationpath_separatorhonly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationpath_separatorhonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationpath : separator</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationstep_indexlocationstep">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationstep_indexlocationstep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationstep_indexlocationstep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationstep_indexlocationstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationstep : indexlocationstep</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationstep_nodename">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationstep_nodename</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationstep_nodename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationstep_nodename" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationstep : nodename</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationstep_nodenamewithpredicates">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationstep_nodenamewithpredicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationstep_nodenamewithpredicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationstep_nodenamewithpredicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationstep : nodename ‘[‘ predicates ‘]’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationsteps_indexlocationstep">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationsteps_indexlocationstep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationsteps_indexlocationstep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationsteps_indexlocationstep" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationsteps : locationsteps indexlocationstep</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationsteps_separator">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationsteps_separator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationsteps_separator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationsteps_separator" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationsteps : locationsteps separator locationstep</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_locationsteps_single">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_locationsteps_single</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_locationsteps_single"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_locationsteps_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>locationsteps : locationstep</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_nodename_nodenameasterisk">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_nodename_nodenameasterisk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_nodename_nodenameasterisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_nodename_nodenameasterisk" title="Permalink to this definition">¶</a></dt>
+<dd><p>nodename : NODENAMEASTERISK</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_nodename_nodenamekey">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_nodename_nodenamekey</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_nodename_nodenamekey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_nodename_nodenamekey" title="Permalink to this definition">¶</a></dt>
+<dd><p>nodename : NODENAMEKEY</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_nodename_nodenameparent">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_nodename_nodenameparent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_nodename_nodenameparent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_nodename_nodenameparent" title="Permalink to this definition">¶</a></dt>
+<dd><p>nodename : NODENAMEPARENT</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_nodename_nodenameself">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_nodename_nodenameself</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_nodename_nodenameself"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_nodename_nodenameself" title="Permalink to this definition">¶</a></dt>
+<dd><p>nodename : NODENAMESELF</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_nodenameindex">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_nodenameindex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_nodenameindex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_nodenameindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>nodenameindex : NODENAMEINDEX</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_predicate">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_predicate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_predicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_predicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>predicate : locationpath ‘=’ VALUE</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_predicates">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_predicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_predicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_predicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>predicates : predicate
+| predicate ‘,’ predicates</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_separator_dslash">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_separator_dslash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_separator_dslash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_separator_dslash" title="Permalink to this definition">¶</a></dt>
+<dd><p>separator : DSLASH
+| DSLASH ‘[‘ predicates ‘]’ separator</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.p_separator_slash">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">p_separator_slash</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">p</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#p_separator_slash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.p_separator_slash" title="Permalink to this definition">¶</a></dt>
+<dd><p>separator : SLASH</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="diffjson.searchpath.parse.parse">
+<code class="sig-prename descclassname">diffjson.searchpath.parse.</code><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pathstring</span></em>, <em class="sig-param"><span class="n">debug</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/parse.html#parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.parse.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-diffjson.searchpath.pathtypes">
+<span id="diffjson-searchpath-pathtypes-module"></span><h2>diffjson.searchpath.pathtypes module<a class="headerlink" href="#module-diffjson.searchpath.pathtypes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.LocationPath">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">LocationPath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">locationsteps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#LocationPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.LocationPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>LocationPath Class.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>locationsteps(list): List of LocationStep instance.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>_locationsteps(list): List of locationsteps.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="diffjson.searchpath.pathtypes.LocationPath.branch">
+<code class="sig-name descname">branch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#LocationPath.branch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.LocationPath.branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get branch locationpath.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>LocationPath: Branch locationpath.</dt><dd><p>[] for last locationstep.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.searchpath.pathtypes.LocationPath.current">
+<code class="sig-name descname">current</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#LocationPath.current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.LocationPath.current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get top locationstep.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>LocationStep</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.LocationStep">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">LocationStep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nodename</span></em>, <em class="sig-param"><span class="n">predicates</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#LocationStep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.LocationStep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="diffjson.searchpath.pathtypes.LocationStep.set_predicates">
+<code class="sig-name descname">set_predicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predicates</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#LocationStep.set_predicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.LocationStep.set_predicates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameAsterisk">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameAsterisk</code><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameAsterisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameAsterisk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameBase">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameBase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">branchkey</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameDescendant">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameDescendant</code><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameDescendant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameDescendant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameIndex">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameIndex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">branchkey</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameKey">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameKey</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">branchkey</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameKey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameParent">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameParent</code><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameParent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameRoot">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameRoot</code><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.NodenameSelf">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">NodenameSelf</code><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#NodenameSelf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.NodenameSelf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.searchpath.pathtypes.NodenameBase" title="diffjson.searchpath.pathtypes.NodenameBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.searchpath.pathtypes.NodenameBase</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.Predicate">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">Predicate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">locationpath</span></em>, <em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#Predicate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.Predicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.searchpath.pathtypes.Predicates">
+<em class="property">class </em><code class="sig-prename descclassname">diffjson.searchpath.pathtypes.</code><code class="sig-name descname">Predicates</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">predicates</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#Predicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.Predicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="diffjson.searchpath.pathtypes.Predicates.sorted">
+<code class="sig-name descname">sorted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/searchpath/pathtypes.html#Predicates.sorted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#diffjson.searchpath.pathtypes.Predicates.sorted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-diffjson.searchpath">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-diffjson.searchpath" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="diffjson.html" class="btn btn-neutral float-left" title="diffjson package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, nfwprod@gmail.com.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

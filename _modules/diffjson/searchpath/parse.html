@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>diffjson.searchpath.parse &mdash; src  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> src
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../diffjson.html">diffjson package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">src</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>diffjson.searchpath.parse</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for diffjson.searchpath.parse</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">ply.yacc</span>
+<span class="kn">from</span> <span class="nn">.lex</span> <span class="kn">import</span> <span class="n">tokens</span>
+<span class="kn">from</span> <span class="nn">.pathtypes</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">pathstring</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">ply</span><span class="o">.</span><span class="n">yacc</span><span class="o">.</span><span class="n">yacc</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span> <span class="n">write_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">pathstring</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">)</span></div>
+
+
+<span class="c1"># Location Path</span>
+<div class="viewcode-block" id="p_locationpath_separatorhonly"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationpath_separatorhonly">[docs]</a><span class="k">def</span> <span class="nf">p_locationpath_separatorhonly</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationpath : separator&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationPath</span><span class="p">([</span><span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameRoot</span><span class="p">())]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="p_locationpath_separator"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationpath_separator">[docs]</a><span class="k">def</span> <span class="nf">p_locationpath_separator</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationpath : separator locationsteps&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationPath</span><span class="p">([</span><span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameRoot</span><span class="p">())]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="p_locationpath_forpredicates"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationpath_forpredicates">[docs]</a><span class="k">def</span> <span class="nf">p_locationpath_forpredicates</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationpath : locationsteps&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationPath</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="p_locationpath_endwithdslash"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationpath_endwithdslash">[docs]</a><span class="k">def</span> <span class="nf">p_locationpath_endwithdslash</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationpath : locationsteps separator&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationPath</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+
+<span class="c1"># Separator</span>
+<div class="viewcode-block" id="p_separator_slash"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_separator_slash">[docs]</a><span class="k">def</span> <span class="nf">p_separator_slash</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;separator : SLASH&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="p_separator_dslash"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_separator_dslash">[docs]</a><span class="k">def</span> <span class="nf">p_separator_dslash</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;separator : DSLASH</span>
+<span class="sd">                 | DSLASH &#39;[&#39; predicates &#39;]&#39; separator&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameDescendant</span><span class="p">())]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameDescendant</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span></div>
+
+
+<span class="c1"># Location Steps</span>
+<div class="viewcode-block" id="p_locationsteps_single"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationsteps_single">[docs]</a><span class="k">def</span> <span class="nf">p_locationsteps_single</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationsteps : locationstep&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="p_locationsteps_separator"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationsteps_separator">[docs]</a><span class="k">def</span> <span class="nf">p_locationsteps_separator</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationsteps : locationsteps separator locationstep&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="p_locationsteps_indexlocationstep"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationsteps_indexlocationstep">[docs]</a><span class="k">def</span> <span class="nf">p_locationsteps_indexlocationstep</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationsteps : locationsteps indexlocationstep&quot;&quot;&quot;</span>
+    <span class="c1"># For /hoge[1][1]</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span></div>
+
+
+<span class="c1"># Location Step</span>
+<div class="viewcode-block" id="p_locationstep_nodename"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationstep_nodename">[docs]</a><span class="k">def</span> <span class="nf">p_locationstep_nodename</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationstep : nodename&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="p_locationstep_nodenamewithpredicates"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationstep_nodenamewithpredicates">[docs]</a><span class="k">def</span> <span class="nf">p_locationstep_nodenamewithpredicates</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationstep : nodename &#39;[&#39; predicates &#39;]&#39;&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_predicates</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="p_locationstep_indexlocationstep"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_locationstep_indexlocationstep">[docs]</a><span class="k">def</span> <span class="nf">p_locationstep_indexlocationstep</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;locationstep : indexlocationstep&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<span class="c1"># Locations Steps for Index ex.) /hoge[0][1]</span>
+<div class="viewcode-block" id="p_indexlocationstep_index"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_indexlocationstep_index">[docs]</a><span class="k">def</span> <span class="nf">p_indexlocationstep_index</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;indexlocationstep : nodenameindex&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="p_indexlocationstep_indexwithpredicates"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_indexlocationstep_indexwithpredicates">[docs]</a><span class="k">def</span> <span class="nf">p_indexlocationstep_indexwithpredicates</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;indexlocationstep : nodenameindex &#39;[&#39; predicates &#39;]&#39;&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_predicates</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<span class="c1"># Nodename and Predicates</span>
+<div class="viewcode-block" id="p_nodename_nodenameasterisk"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_nodename_nodenameasterisk">[docs]</a><span class="k">def</span> <span class="nf">p_nodename_nodenameasterisk</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;nodename : NODENAMEASTERISK&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameAsterisk</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="p_nodename_nodenameparent"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_nodename_nodenameparent">[docs]</a><span class="k">def</span> <span class="nf">p_nodename_nodenameparent</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;nodename : NODENAMEPARENT&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameParent</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="p_nodename_nodenameself"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_nodename_nodenameself">[docs]</a><span class="k">def</span> <span class="nf">p_nodename_nodenameself</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;nodename : NODENAMESELF&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameSelf</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="p_nodename_nodenamekey"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_nodename_nodenamekey">[docs]</a><span class="k">def</span> <span class="nf">p_nodename_nodenamekey</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;nodename : NODENAMEKEY&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameKey</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="p_nodenameindex"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_nodenameindex">[docs]</a><span class="k">def</span> <span class="nf">p_nodenameindex</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;nodenameindex : NODENAMEINDEX&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">NodenameIndex</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="p_predicates"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_predicates">[docs]</a><span class="k">def</span> <span class="nf">p_predicates</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;predicates : predicate</span>
+<span class="sd">            | predicate &#39;,&#39; predicates&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Predicates</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Predicates</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="p_predicate"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_predicate">[docs]</a><span class="k">def</span> <span class="nf">p_predicate</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;predicate : locationpath &#39;=&#39; VALUE&quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Predicate</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<span class="c1"># Error</span>
+<div class="viewcode-block" id="p_error"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.parse.p_error">[docs]</a><span class="k">def</span> <span class="nf">p_error</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;YACC parse error, </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, nfwprod@gmail.com.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
