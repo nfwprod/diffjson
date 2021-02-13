@@ -1,0 +1,678 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> locationpath
+Rule 1     locationpath -> separator
+Rule 2     locationpath -> separator locationsteps
+Rule 3     locationpath -> locationsteps
+Rule 4     locationpath -> locationsteps separator
+Rule 5     separator -> SLASH
+Rule 6     separator -> DSLASH
+Rule 7     separator -> DSLASH [ predicates ] separator
+Rule 8     locationsteps -> locationstep
+Rule 9     locationsteps -> locationsteps separator locationstep
+Rule 10    locationsteps -> locationsteps indexlocationstep
+Rule 11    locationstep -> nodename
+Rule 12    locationstep -> nodename [ predicates ]
+Rule 13    locationstep -> indexlocationstep
+Rule 14    indexlocationstep -> nodenameindex
+Rule 15    indexlocationstep -> nodenameindex [ predicates ]
+Rule 16    nodename -> NODENAMEASTERISK
+Rule 17    nodename -> NODENAMEPARENT
+Rule 18    nodename -> NODENAMESELF
+Rule 19    nodename -> NODENAMEKEY
+Rule 20    nodenameindex -> NODENAMEINDEX
+Rule 21    predicates -> predicate
+Rule 22    predicates -> predicate , predicates
+Rule 23    predicate -> locationpath = VALUE
+
+Terminals, with rules where they appear
+
+,                    : 22
+=                    : 23
+DSLASH               : 6 7
+NODENAMEASTERISK     : 16
+NODENAMEINDEX        : 20
+NODENAMEKEY          : 19
+NODENAMEPARENT       : 17
+NODENAMESELF         : 18
+SLASH                : 5
+VALUE                : 23
+[                    : 7 12 15
+]                    : 7 12 15
+error                : 
+
+Nonterminals, with rules where they appear
+
+indexlocationstep    : 10 13
+locationpath         : 23 0
+locationstep         : 8 9
+locationsteps        : 2 3 4 9 10
+nodename             : 11 12
+nodenameindex        : 14 15
+predicate            : 21 22
+predicates           : 7 12 15 22
+separator            : 1 2 4 7 9
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . locationpath
+    (1) locationpath -> . separator
+    (2) locationpath -> . separator locationsteps
+    (3) locationpath -> . locationsteps
+    (4) locationpath -> . locationsteps separator
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (8) locationsteps -> . locationstep
+    (9) locationsteps -> . locationsteps separator locationstep
+    (10) locationsteps -> . locationsteps indexlocationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    locationpath                   shift and go to state 1
+    separator                      shift and go to state 2
+    locationsteps                  shift and go to state 3
+    locationstep                   shift and go to state 6
+    indexlocationstep              shift and go to state 7
+    nodename                       shift and go to state 8
+    nodenameindex                  shift and go to state 13
+
+state 1
+
+    (0) S' -> locationpath .
+
+
+
+state 2
+
+    (1) locationpath -> separator .
+    (2) locationpath -> separator . locationsteps
+    (8) locationsteps -> . locationstep
+    (9) locationsteps -> . locationsteps separator locationstep
+    (10) locationsteps -> . locationsteps indexlocationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    $end            reduce using rule 1 (locationpath -> separator .)
+    =               reduce using rule 1 (locationpath -> separator .)
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    locationsteps                  shift and go to state 15
+    locationstep                   shift and go to state 6
+    indexlocationstep              shift and go to state 7
+    nodename                       shift and go to state 8
+    nodenameindex                  shift and go to state 13
+
+state 3
+
+    (3) locationpath -> locationsteps .
+    (4) locationpath -> locationsteps . separator
+    (9) locationsteps -> locationsteps . separator locationstep
+    (10) locationsteps -> locationsteps . indexlocationstep
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    $end            reduce using rule 3 (locationpath -> locationsteps .)
+    =               reduce using rule 3 (locationpath -> locationsteps .)
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEINDEX   shift and go to state 14
+
+    separator                      shift and go to state 16
+    indexlocationstep              shift and go to state 17
+    nodenameindex                  shift and go to state 13
+
+state 4
+
+    (5) separator -> SLASH .
+
+    NODENAMEASTERISK reduce using rule 5 (separator -> SLASH .)
+    NODENAMEPARENT  reduce using rule 5 (separator -> SLASH .)
+    NODENAMESELF    reduce using rule 5 (separator -> SLASH .)
+    NODENAMEKEY     reduce using rule 5 (separator -> SLASH .)
+    NODENAMEINDEX   reduce using rule 5 (separator -> SLASH .)
+    $end            reduce using rule 5 (separator -> SLASH .)
+    =               reduce using rule 5 (separator -> SLASH .)
+
+
+state 5
+
+    (6) separator -> DSLASH .
+    (7) separator -> DSLASH . [ predicates ] separator
+
+    NODENAMEASTERISK reduce using rule 6 (separator -> DSLASH .)
+    NODENAMEPARENT  reduce using rule 6 (separator -> DSLASH .)
+    NODENAMESELF    reduce using rule 6 (separator -> DSLASH .)
+    NODENAMEKEY     reduce using rule 6 (separator -> DSLASH .)
+    NODENAMEINDEX   reduce using rule 6 (separator -> DSLASH .)
+    $end            reduce using rule 6 (separator -> DSLASH .)
+    =               reduce using rule 6 (separator -> DSLASH .)
+    [               shift and go to state 18
+
+
+state 6
+
+    (8) locationsteps -> locationstep .
+
+    SLASH           reduce using rule 8 (locationsteps -> locationstep .)
+    DSLASH          reduce using rule 8 (locationsteps -> locationstep .)
+    NODENAMEINDEX   reduce using rule 8 (locationsteps -> locationstep .)
+    $end            reduce using rule 8 (locationsteps -> locationstep .)
+    =               reduce using rule 8 (locationsteps -> locationstep .)
+
+
+state 7
+
+    (13) locationstep -> indexlocationstep .
+
+    SLASH           reduce using rule 13 (locationstep -> indexlocationstep .)
+    DSLASH          reduce using rule 13 (locationstep -> indexlocationstep .)
+    NODENAMEINDEX   reduce using rule 13 (locationstep -> indexlocationstep .)
+    $end            reduce using rule 13 (locationstep -> indexlocationstep .)
+    =               reduce using rule 13 (locationstep -> indexlocationstep .)
+
+
+state 8
+
+    (11) locationstep -> nodename .
+    (12) locationstep -> nodename . [ predicates ]
+
+    SLASH           reduce using rule 11 (locationstep -> nodename .)
+    DSLASH          reduce using rule 11 (locationstep -> nodename .)
+    NODENAMEINDEX   reduce using rule 11 (locationstep -> nodename .)
+    $end            reduce using rule 11 (locationstep -> nodename .)
+    =               reduce using rule 11 (locationstep -> nodename .)
+    [               shift and go to state 19
+
+
+state 9
+
+    (16) nodename -> NODENAMEASTERISK .
+
+    [               reduce using rule 16 (nodename -> NODENAMEASTERISK .)
+    SLASH           reduce using rule 16 (nodename -> NODENAMEASTERISK .)
+    DSLASH          reduce using rule 16 (nodename -> NODENAMEASTERISK .)
+    NODENAMEINDEX   reduce using rule 16 (nodename -> NODENAMEASTERISK .)
+    $end            reduce using rule 16 (nodename -> NODENAMEASTERISK .)
+    =               reduce using rule 16 (nodename -> NODENAMEASTERISK .)
+
+
+state 10
+
+    (17) nodename -> NODENAMEPARENT .
+
+    [               reduce using rule 17 (nodename -> NODENAMEPARENT .)
+    SLASH           reduce using rule 17 (nodename -> NODENAMEPARENT .)
+    DSLASH          reduce using rule 17 (nodename -> NODENAMEPARENT .)
+    NODENAMEINDEX   reduce using rule 17 (nodename -> NODENAMEPARENT .)
+    $end            reduce using rule 17 (nodename -> NODENAMEPARENT .)
+    =               reduce using rule 17 (nodename -> NODENAMEPARENT .)
+
+
+state 11
+
+    (18) nodename -> NODENAMESELF .
+
+    [               reduce using rule 18 (nodename -> NODENAMESELF .)
+    SLASH           reduce using rule 18 (nodename -> NODENAMESELF .)
+    DSLASH          reduce using rule 18 (nodename -> NODENAMESELF .)
+    NODENAMEINDEX   reduce using rule 18 (nodename -> NODENAMESELF .)
+    $end            reduce using rule 18 (nodename -> NODENAMESELF .)
+    =               reduce using rule 18 (nodename -> NODENAMESELF .)
+
+
+state 12
+
+    (19) nodename -> NODENAMEKEY .
+
+    [               reduce using rule 19 (nodename -> NODENAMEKEY .)
+    SLASH           reduce using rule 19 (nodename -> NODENAMEKEY .)
+    DSLASH          reduce using rule 19 (nodename -> NODENAMEKEY .)
+    NODENAMEINDEX   reduce using rule 19 (nodename -> NODENAMEKEY .)
+    $end            reduce using rule 19 (nodename -> NODENAMEKEY .)
+    =               reduce using rule 19 (nodename -> NODENAMEKEY .)
+
+
+state 13
+
+    (14) indexlocationstep -> nodenameindex .
+    (15) indexlocationstep -> nodenameindex . [ predicates ]
+
+    SLASH           reduce using rule 14 (indexlocationstep -> nodenameindex .)
+    DSLASH          reduce using rule 14 (indexlocationstep -> nodenameindex .)
+    NODENAMEINDEX   reduce using rule 14 (indexlocationstep -> nodenameindex .)
+    $end            reduce using rule 14 (indexlocationstep -> nodenameindex .)
+    =               reduce using rule 14 (indexlocationstep -> nodenameindex .)
+    [               shift and go to state 20
+
+
+state 14
+
+    (20) nodenameindex -> NODENAMEINDEX .
+
+    [               reduce using rule 20 (nodenameindex -> NODENAMEINDEX .)
+    SLASH           reduce using rule 20 (nodenameindex -> NODENAMEINDEX .)
+    DSLASH          reduce using rule 20 (nodenameindex -> NODENAMEINDEX .)
+    NODENAMEINDEX   reduce using rule 20 (nodenameindex -> NODENAMEINDEX .)
+    $end            reduce using rule 20 (nodenameindex -> NODENAMEINDEX .)
+    =               reduce using rule 20 (nodenameindex -> NODENAMEINDEX .)
+
+
+state 15
+
+    (2) locationpath -> separator locationsteps .
+    (9) locationsteps -> locationsteps . separator locationstep
+    (10) locationsteps -> locationsteps . indexlocationstep
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    $end            reduce using rule 2 (locationpath -> separator locationsteps .)
+    =               reduce using rule 2 (locationpath -> separator locationsteps .)
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEINDEX   shift and go to state 14
+
+    separator                      shift and go to state 21
+    indexlocationstep              shift and go to state 17
+    nodenameindex                  shift and go to state 13
+
+state 16
+
+    (4) locationpath -> locationsteps separator .
+    (9) locationsteps -> locationsteps separator . locationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    $end            reduce using rule 4 (locationpath -> locationsteps separator .)
+    =               reduce using rule 4 (locationpath -> locationsteps separator .)
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    locationstep                   shift and go to state 22
+    nodename                       shift and go to state 8
+    indexlocationstep              shift and go to state 7
+    nodenameindex                  shift and go to state 13
+
+state 17
+
+    (10) locationsteps -> locationsteps indexlocationstep .
+
+    SLASH           reduce using rule 10 (locationsteps -> locationsteps indexlocationstep .)
+    DSLASH          reduce using rule 10 (locationsteps -> locationsteps indexlocationstep .)
+    NODENAMEINDEX   reduce using rule 10 (locationsteps -> locationsteps indexlocationstep .)
+    $end            reduce using rule 10 (locationsteps -> locationsteps indexlocationstep .)
+    =               reduce using rule 10 (locationsteps -> locationsteps indexlocationstep .)
+
+
+state 18
+
+    (7) separator -> DSLASH [ . predicates ] separator
+    (21) predicates -> . predicate
+    (22) predicates -> . predicate , predicates
+    (23) predicate -> . locationpath = VALUE
+    (1) locationpath -> . separator
+    (2) locationpath -> . separator locationsteps
+    (3) locationpath -> . locationsteps
+    (4) locationpath -> . locationsteps separator
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (8) locationsteps -> . locationstep
+    (9) locationsteps -> . locationsteps separator locationstep
+    (10) locationsteps -> . locationsteps indexlocationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    predicates                     shift and go to state 23
+    separator                      shift and go to state 2
+    predicate                      shift and go to state 24
+    locationpath                   shift and go to state 25
+    locationsteps                  shift and go to state 3
+    locationstep                   shift and go to state 6
+    indexlocationstep              shift and go to state 7
+    nodename                       shift and go to state 8
+    nodenameindex                  shift and go to state 13
+
+state 19
+
+    (12) locationstep -> nodename [ . predicates ]
+    (21) predicates -> . predicate
+    (22) predicates -> . predicate , predicates
+    (23) predicate -> . locationpath = VALUE
+    (1) locationpath -> . separator
+    (2) locationpath -> . separator locationsteps
+    (3) locationpath -> . locationsteps
+    (4) locationpath -> . locationsteps separator
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (8) locationsteps -> . locationstep
+    (9) locationsteps -> . locationsteps separator locationstep
+    (10) locationsteps -> . locationsteps indexlocationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    nodename                       shift and go to state 8
+    predicates                     shift and go to state 26
+    predicate                      shift and go to state 24
+    locationpath                   shift and go to state 25
+    separator                      shift and go to state 2
+    locationsteps                  shift and go to state 3
+    locationstep                   shift and go to state 6
+    indexlocationstep              shift and go to state 7
+    nodenameindex                  shift and go to state 13
+
+state 20
+
+    (15) indexlocationstep -> nodenameindex [ . predicates ]
+    (21) predicates -> . predicate
+    (22) predicates -> . predicate , predicates
+    (23) predicate -> . locationpath = VALUE
+    (1) locationpath -> . separator
+    (2) locationpath -> . separator locationsteps
+    (3) locationpath -> . locationsteps
+    (4) locationpath -> . locationsteps separator
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (8) locationsteps -> . locationstep
+    (9) locationsteps -> . locationsteps separator locationstep
+    (10) locationsteps -> . locationsteps indexlocationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    nodenameindex                  shift and go to state 13
+    predicates                     shift and go to state 27
+    predicate                      shift and go to state 24
+    locationpath                   shift and go to state 25
+    separator                      shift and go to state 2
+    locationsteps                  shift and go to state 3
+    locationstep                   shift and go to state 6
+    indexlocationstep              shift and go to state 7
+    nodename                       shift and go to state 8
+
+state 21
+
+    (9) locationsteps -> locationsteps separator . locationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    locationstep                   shift and go to state 22
+    nodename                       shift and go to state 8
+    indexlocationstep              shift and go to state 7
+    nodenameindex                  shift and go to state 13
+
+state 22
+
+    (9) locationsteps -> locationsteps separator locationstep .
+
+    SLASH           reduce using rule 9 (locationsteps -> locationsteps separator locationstep .)
+    DSLASH          reduce using rule 9 (locationsteps -> locationsteps separator locationstep .)
+    NODENAMEINDEX   reduce using rule 9 (locationsteps -> locationsteps separator locationstep .)
+    $end            reduce using rule 9 (locationsteps -> locationsteps separator locationstep .)
+    =               reduce using rule 9 (locationsteps -> locationsteps separator locationstep .)
+
+
+state 23
+
+    (7) separator -> DSLASH [ predicates . ] separator
+
+    ]               shift and go to state 28
+
+
+state 24
+
+    (21) predicates -> predicate .
+    (22) predicates -> predicate . , predicates
+
+    ]               reduce using rule 21 (predicates -> predicate .)
+    ,               shift and go to state 29
+
+
+state 25
+
+    (23) predicate -> locationpath . = VALUE
+
+    =               shift and go to state 30
+
+
+state 26
+
+    (12) locationstep -> nodename [ predicates . ]
+
+    ]               shift and go to state 31
+
+
+state 27
+
+    (15) indexlocationstep -> nodenameindex [ predicates . ]
+
+    ]               shift and go to state 32
+
+
+state 28
+
+    (7) separator -> DSLASH [ predicates ] . separator
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+
+    separator                      shift and go to state 33
+
+state 29
+
+    (22) predicates -> predicate , . predicates
+    (21) predicates -> . predicate
+    (22) predicates -> . predicate , predicates
+    (23) predicate -> . locationpath = VALUE
+    (1) locationpath -> . separator
+    (2) locationpath -> . separator locationsteps
+    (3) locationpath -> . locationsteps
+    (4) locationpath -> . locationsteps separator
+    (5) separator -> . SLASH
+    (6) separator -> . DSLASH
+    (7) separator -> . DSLASH [ predicates ] separator
+    (8) locationsteps -> . locationstep
+    (9) locationsteps -> . locationsteps separator locationstep
+    (10) locationsteps -> . locationsteps indexlocationstep
+    (11) locationstep -> . nodename
+    (12) locationstep -> . nodename [ predicates ]
+    (13) locationstep -> . indexlocationstep
+    (16) nodename -> . NODENAMEASTERISK
+    (17) nodename -> . NODENAMEPARENT
+    (18) nodename -> . NODENAMESELF
+    (19) nodename -> . NODENAMEKEY
+    (14) indexlocationstep -> . nodenameindex
+    (15) indexlocationstep -> . nodenameindex [ predicates ]
+    (20) nodenameindex -> . NODENAMEINDEX
+
+    SLASH           shift and go to state 4
+    DSLASH          shift and go to state 5
+    NODENAMEASTERISK shift and go to state 9
+    NODENAMEPARENT  shift and go to state 10
+    NODENAMESELF    shift and go to state 11
+    NODENAMEKEY     shift and go to state 12
+    NODENAMEINDEX   shift and go to state 14
+
+    predicate                      shift and go to state 24
+    predicates                     shift and go to state 34
+    locationpath                   shift and go to state 25
+    separator                      shift and go to state 2
+    locationsteps                  shift and go to state 3
+    locationstep                   shift and go to state 6
+    indexlocationstep              shift and go to state 7
+    nodename                       shift and go to state 8
+    nodenameindex                  shift and go to state 13
+
+state 30
+
+    (23) predicate -> locationpath = . VALUE
+
+    VALUE           shift and go to state 35
+
+
+state 31
+
+    (12) locationstep -> nodename [ predicates ] .
+
+    SLASH           reduce using rule 12 (locationstep -> nodename [ predicates ] .)
+    DSLASH          reduce using rule 12 (locationstep -> nodename [ predicates ] .)
+    NODENAMEINDEX   reduce using rule 12 (locationstep -> nodename [ predicates ] .)
+    $end            reduce using rule 12 (locationstep -> nodename [ predicates ] .)
+    =               reduce using rule 12 (locationstep -> nodename [ predicates ] .)
+
+
+state 32
+
+    (15) indexlocationstep -> nodenameindex [ predicates ] .
+
+    SLASH           reduce using rule 15 (indexlocationstep -> nodenameindex [ predicates ] .)
+    DSLASH          reduce using rule 15 (indexlocationstep -> nodenameindex [ predicates ] .)
+    NODENAMEINDEX   reduce using rule 15 (indexlocationstep -> nodenameindex [ predicates ] .)
+    $end            reduce using rule 15 (indexlocationstep -> nodenameindex [ predicates ] .)
+    =               reduce using rule 15 (indexlocationstep -> nodenameindex [ predicates ] .)
+
+
+state 33
+
+    (7) separator -> DSLASH [ predicates ] separator .
+
+    NODENAMEASTERISK reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+    NODENAMEPARENT  reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+    NODENAMESELF    reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+    NODENAMEKEY     reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+    NODENAMEINDEX   reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+    $end            reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+    =               reduce using rule 7 (separator -> DSLASH [ predicates ] separator .)
+
+
+state 34
+
+    (22) predicates -> predicate , predicates .
+
+    ]               reduce using rule 22 (predicates -> predicate , predicates .)
+
+
+state 35
+
+    (23) predicate -> locationpath = VALUE .
+
+    ,               reduce using rule 23 (predicate -> locationpath = VALUE .)
+    ]               reduce using rule 23 (predicate -> locationpath = VALUE .)
+

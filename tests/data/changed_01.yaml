@@ -1,0 +1,29 @@
+branch01:
+  b01-01: changed # Changed
+  # b01-02: 1 # Deleted
+  b01-03: 2.0
+  b01-04: True
+  b01-05: added # Added
+branch02:
+  b02-01:
+    - name: n02-01-i01
+      value: v02-01-i01
+    - name: n02-01-i02
+      value:
+        b02-01-i02-01:
+          - name: n02-01-i02-01-i01
+            value: v02-01-i02-01-i01
+          - name: n02-01-i02-01-i02
+            value: v02-01-i02-01-i02
+          - name: changed # Changed in List
+            value: changed
+          - name: n02-01-i02-01-i04 # Added in List
+            value: v02-01-i02-01-i04
+        b02-01-i02-02:
+          name: n02-01-i02-02
+          value: v02-01-i02-02
+    # - name: n02-01-i03 # Deleted Branch in List
+    #   value:
+    #     b02-01-i03-01: v02-01-i03-01
+branch03:
+  b03-01: null
