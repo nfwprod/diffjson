@@ -1,0 +1,60 @@
+name: Generate Document
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  documemtation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install sphinx
+        run: |
+          pip3 install sphinx
+          pip3 install sphinx_rtd_theme
+
+      - name: Install requirements
+        run: pip3 install -r requirements.txt
+
+      - name: Make HTML
+        run: make html
+        working-directory: ./docs
+
+      - name: Change Branch
+        run: git checkout gh-pages
+
+      - name: Clean directories
+        run: find -mindepth 1 -maxdepth 1 -not -name "docs" -and -not -name ".git" -and -not -name ".nojekyll" | xargs -n1 rm  -rf
+
+      - name: Arrange html files
+        run: |
+          mv -f ./docs/_build/html/* ./
+          rm -rf ./docs
+
+      - name: Setup SSH
+        run: |
+            mkdir ~/.ssh
+            ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+            echo "${{ secrets.UPLOADKEY }}" > ~/.ssh/id_rsa
+            chmod 400 ~/.ssh/id_rsa
+
+      - name: Commit and Push
+        env:
+          GITHUB_USER: "nfwprod@gmail.com"
+          GITHUB_EMAIL: "nfwprod@gmail.com"
+        run: |
+          git config --local user.name "${GITHUB_USER}"
+          git config --local user.email "${GITHUB_EMAIL}"
+          git add .
+          git commit -m "Auto documentation"
+          git push origin gh-pages
