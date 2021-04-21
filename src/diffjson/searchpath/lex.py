@@ -17,11 +17,11 @@ literals = ['[', ']', '=', ',']
 t_VALUE = '(\'[^\']+\')|(\"[^\"]+\")'
 t_DSLASH = '//'
 t_SLASH = '/'
-t_NODENAMEASTERISK = '\*'
-t_NODENAMEPARENT = '\.\.'
-t_NODENAMESELF = '\.'
-t_NODENAMEKEY = '[\w-]+'
-t_NODENAMEINDEX = '\[[0-9]+\]'
+t_NODENAMEASTERISK = '\\*'
+t_NODENAMEPARENT = '\\.\\.'
+t_NODENAMESELF = '\\.'
+t_NODENAMEKEY = '[-_@\\w][-_@\\.\\w]*'
+t_NODENAMEINDEX = '\\[[0-9]+\\]'
 
 
 def t_error(t):
