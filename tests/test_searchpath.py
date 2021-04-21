@@ -104,6 +104,23 @@ class TestSearchpathParses(object):
         assert p == expected
         assert str(p) == pathstring
 
+    def test_parse_complex01(self):
+        """
+        Parser must parse input string and output appropriate LocationPath instance.
+
+        """
+        expected = diffjson.LocationPath([
+            diffjson.LocationStep(diffjson.NodenameRoot()),
+            diffjson.LocationStep(diffjson.NodenameKey('branch.01-02_03@example.net')),
+            diffjson.LocationStep(diffjson.NodenameKey('b01-01')),
+        ])
+
+        pathstring = '/branch.01-02_03@example.net/b01-01'
+        p = diffjson.parse(pathstring)
+
+        assert p == expected
+        assert str(p) == pathstring
+
     def test_parse_with_index(self):
         """
         Parser with NodeIndex.
