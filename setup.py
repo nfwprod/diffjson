@@ -12,13 +12,13 @@ def _requires_from_file(filename):
 
 setup(
     name="diffjson",
-    version="0.1.0",
+    version="0.1.1",
     license="MIT",
     description="Tools to diff json format data.",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     author="nfwprod@gmail.com",
-    url="https://github.com/nfwstg/diffjson",
+    url="https://github.com/nfwprod/diffjson",
     packages=find_packages("src"),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
