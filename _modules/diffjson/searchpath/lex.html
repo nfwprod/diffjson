@@ -170,11 +170,11 @@
 <span class="n">t_VALUE</span> <span class="o">=</span> <span class="s1">&#39;(</span><span class="se">\&#39;</span><span class="s1">[^</span><span class="se">\&#39;</span><span class="s1">]+</span><span class="se">\&#39;</span><span class="s1">)|(</span><span class="se">\&quot;</span><span class="s1">[^</span><span class="se">\&quot;</span><span class="s1">]+</span><span class="se">\&quot;</span><span class="s1">)&#39;</span>
 <span class="n">t_DSLASH</span> <span class="o">=</span> <span class="s1">&#39;//&#39;</span>
 <span class="n">t_SLASH</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
-<span class="n">t_NODENAMEASTERISK</span> <span class="o">=</span> <span class="s1">&#39;\*&#39;</span>
-<span class="n">t_NODENAMEPARENT</span> <span class="o">=</span> <span class="s1">&#39;\.\.&#39;</span>
-<span class="n">t_NODENAMESELF</span> <span class="o">=</span> <span class="s1">&#39;\.&#39;</span>
-<span class="n">t_NODENAMEKEY</span> <span class="o">=</span> <span class="s1">&#39;[\w-]+&#39;</span>
-<span class="n">t_NODENAMEINDEX</span> <span class="o">=</span> <span class="s1">&#39;\[[0-9]+\]&#39;</span>
+<span class="n">t_NODENAMEASTERISK</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">*&#39;</span>
+<span class="n">t_NODENAMEPARENT</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">.</span><span class="se">\\</span><span class="s1">.&#39;</span>
+<span class="n">t_NODENAMESELF</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">.&#39;</span>
+<span class="n">t_NODENAMEKEY</span> <span class="o">=</span> <span class="s1">&#39;[-_@</span><span class="se">\\</span><span class="s1">w][-_@</span><span class="se">\\</span><span class="s1">.</span><span class="se">\\</span><span class="s1">w]*&#39;</span>
+<span class="n">t_NODENAMEINDEX</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">[[0-9]+</span><span class="se">\\</span><span class="s1">]&#39;</span>
 
 
 <div class="viewcode-block" id="t_error"><a class="viewcode-back" href="../../../diffjson.searchpath.html#diffjson.searchpath.lex.t_error">[docs]</a><span class="k">def</span> <span class="nf">t_error</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
