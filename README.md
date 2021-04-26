@@ -80,7 +80,7 @@ Search returns all matched data as List style.
 # DiffBranch Class for Diff JSON Data
 
 ## DiffBranch Class
-Diff multi json data as Branch instance by 'diff_branch'.
+Diff multi json data as Branch instance by 'diff_branches'.
 
 - DiffRootBranch
   - Root for all child diff branches.
@@ -163,4 +163,27 @@ id02:
 id03:
   name: id03
   value: data03
+```
+
+## Diff Search
+DiffBranch class accept search.
+
+Arguments are as follows.
+
+- locationpath_string(str): XPath format search string.
+- details(bool, option): Return searched path with value, default: False(value only).
+- dump_mode(str, option): DiffTwoBranch only.
+  - 'all': Dump all branch.
+  - 'added': Dump added branch. Include added root and children.
+  - 'bulk_added': Dump added root branch, ignore children of them.
+  - 'removed': Dump removed branch. Include added root and children.
+  - 'bulk_removed': Dump removed root branch, ignore children of them.
+  - 'changed': Dump changed branch only.
+
+```python
+diffbranch = diffjson.diff_branch([data01, data02, data03])
+
+# Search
+diffbranch.search('//', dump_mode='added', details=True)
+
 ```
