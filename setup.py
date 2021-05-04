@@ -12,7 +12,7 @@ def _requires_from_file(filename):
 
 setup(
     name="diffjson",
-    version="0.1.1",
+    version="0.1.2",
     license="MIT",
     description="Tools to diff json format data.",
     long_description=open('README.md').read(),
