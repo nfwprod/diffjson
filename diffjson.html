@@ -189,8 +189,8 @@
 <div class="section" id="module-diffjson.branch">
 <span id="diffjson-branch-module"></span><h2>diffjson.branch module<a class="headerlink" href="#module-diffjson.branch" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="diffjson.branch.Branch">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">Branch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#Branch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.Branch" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">BranchBase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Template Class for branch base.
 All Branch and Leaf class must be inherit this class.</p>
@@ -199,9 +199,10 @@ All Branch and Leaf class must be inherit this class.</p>
 <dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
 </dd>
 </dl>
-<p>parent(Branch): Parent branch of this branch.</p>
+<p>parent(BranchBase): Parent branch of this branch.</p>
+<p>_childbranches(dict or list): Child branches, wrapped by attributes.</p>
 </dd>
-<dt>Attributes:</dt><dd><p>parent(Branch): Parent branch of this branch.</p>
+<dt>Attributes:</dt><dd><p>parent(BranchBase): Parent branch of this branch.</p>
 <p>childnodenames(list): List of NodeName for childbranches. (getter)</p>
 <p>childbranches(list): List of childbranches. (getter)</p>
 <p>descendants(list): List of descendant branches. (getter)</p>
@@ -209,20 +210,31 @@ All Branch and Leaf class must be inherit this class.</p>
 <p>nodename(NodenameBase): Nodename of this branch. (getter)</p>
 <p>locationpath(LocationPath): LocationPath of this branch. (getter)</p>
 </dd>
-<dt>Note:</dt><dd><p>Branch objects are wrapped with branches().</p>
-<p>Not allow to access directory because data types are
+<dt>Note:</dt><dd><p>Not allow to access directory because data types are
 different for all branch types.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="diffjson.branch.Branch.childbranch">
-<code class="sig-name descname"><span class="pre">childbranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#Branch.childbranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.Branch.childbranch" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.check_predicates">
+<code class="sig-name descname"><span class="pre">check_predicates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.check_predicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.check_predicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check self branch matches predicates or not.</p>
+<dl class="simple">
+<dt>Args</dt><dd><p>predicates(Predicates): List of Arg objects.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Boolean: Predicates match for the branch or not.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.BranchBase.childbranch">
+<code class="sig-name descname"><span class="pre">childbranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.childbranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.childbranch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return child branch with target nodename if exist</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>nodename(NodenameBase): Child nodename.</p>
 </dd>
 <dt>Returns:</dt><dd><dl class="simple">
-<dt>Branch: Target Child branch.</dt><dd><p>Return NullBranch if not exist.</p>
+<dt>BranchBase: Target Child branch.</dt><dd><p>Return NullBranch if not exist.</p>
 </dd>
 </dl>
 </dd>
@@ -230,8 +242,8 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.childbranches">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">childbranches</span></code><a class="headerlink" href="#diffjson.branch.Branch.childbranches" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.childbranches">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">childbranches</span></code><a class="headerlink" href="#diffjson.branch.BranchBase.childbranches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all child branches.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>list: List of all child branches.</p>
@@ -240,8 +252,8 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.childnodenames">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">childnodenames</span></code><a class="headerlink" href="#diffjson.branch.Branch.childnodenames" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.childnodenames">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">childnodenames</span></code><a class="headerlink" href="#diffjson.branch.BranchBase.childnodenames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Nodenames of branches.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>list: List of branch nodenames.</p>
@@ -250,8 +262,8 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.descendants">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">descendants</span></code><a class="headerlink" href="#diffjson.branch.Branch.descendants" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.descendants">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">descendants</span></code><a class="headerlink" href="#diffjson.branch.BranchBase.descendants" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all descendants branches.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>list: List of all descendants branches in flat format.</p>
@@ -260,8 +272,8 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.dump">
-<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#Branch.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.Branch.dump" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.dump">
+<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return json data of child branches.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>Any json data: Dict format child branches.</p>
@@ -270,8 +282,28 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.isat">
-<code class="sig-name descname"><span class="pre">isat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#Branch.isat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.Branch.isat" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.is_child">
+<code class="sig-name descname"><span class="pre">is_child</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.is_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.is_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is child or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.BranchBase.is_root">
+<code class="sig-name descname"><span class="pre">is_root</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.is_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.BranchBase.isat">
+<code class="sig-name descname"><span class="pre">isat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.isat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.isat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check this branch is at target locationpath</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>locationpath_str(str): Check target.</p>
@@ -282,8 +314,8 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.locationpath">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">locationpath</span></code><a class="headerlink" href="#diffjson.branch.Branch.locationpath" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.locationpath">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">locationpath</span></code><a class="headerlink" href="#diffjson.branch.BranchBase.locationpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract location Path.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>LocationPath: LocationPath of this branch.</p>
@@ -292,8 +324,8 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.nodename">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">nodename</span></code><a class="headerlink" href="#diffjson.branch.Branch.nodename" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.nodename">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">nodename</span></code><a class="headerlink" href="#diffjson.branch.BranchBase.nodename" title="Permalink to this definition">¶</a></dt>
 <dd><p>Nodename for self.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>NodenameBase: nodename.</p>
@@ -304,11 +336,180 @@ different for all branch types.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.branch.Branch.rootbranch">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">rootbranch</span></code><a class="headerlink" href="#diffjson.branch.Branch.rootbranch" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.branch.BranchBase.raw_search">
+<code class="sig-name descname"><span class="pre">raw_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.raw_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.raw_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search child branches by locationpath.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>locationpath(LocationPath): Search LocationPath</p>
+</dd>
+<dt>Returns:</dt><dd><p>List: List of matched objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.BranchBase.raw_set">
+<code class="sig-name descname"><span class="pre">raw_set</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">childbranch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.raw_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.raw_set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.BranchBase.rootbranch">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">rootbranch</span></code><a class="headerlink" href="#diffjson.branch.BranchBase.rootbranch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return root branch.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>RootBranch: Root of this branch.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.BranchBase.search">
+<code class="sig-name descname"><span class="pre">search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#BranchBase.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.BranchBase.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search target path and get json data list.</p>
+<dl>
+<dt>Args:</dt><dd><p>locationpath_string(str): XPath format search string.</p>
+<dl class="simple">
+<dt>details(bool): Return searched path with value,</dt><dd><p>default: False(value only).</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list: List of json data at target path (details=False).</dt><dd><p>With details True, list of set like
+{target_path(str), dict or list at target path}.</p>
+</dd>
+</dl>
+</dd>
+<dt>Node:</dt><dd><p>This method must be implemented in RootBranch only.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.branch.ChildBranch">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">ChildBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.BranchBase" title="diffjson.branch.BranchBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.BranchBase</span></code></a></p>
+<p>Class for child data in json data tree.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>All child branch classes inherits this class.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.append">
+<code class="sig-name descname"><span class="pre">append</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append new data to target DictBranch.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>LocationPath or None: LocationPath of new branch.</dt><dd><p>Return None if target nodename already exist.</p>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Must be implemented for ListBranch only.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.insert">
+<code class="sig-name descname"><span class="pre">insert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert new data to target DictBranch.</p>
+<dl>
+<dt>Args:</dt><dd><p>nodepath_string(str): XPath format search string.</p>
+<dl class="simple">
+<dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>LocationPath or None: LocationPath of new branch.</dt><dd><p>Return None if target nodename already exist.</p>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Must be implemented for ListBranch only.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.is_child">
+<code class="sig-name descname"><span class="pre">is_child</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.is_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.is_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is child or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.is_root">
+<code class="sig-name descname"><span class="pre">is_root</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.is_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.pop">
+<code class="sig-name descname"><span class="pre">pop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pop target BranchBase.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>nodename(NodeName): Pop Target</p>
+</dd>
+<dt>Returns:</dt><dd><p>BranchBase</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.remove">
+<code class="sig-name descname"><span class="pre">remove</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove target BranchBase.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>nodename(NodeName): Pop Target</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.set">
+<code class="sig-name descname"><span class="pre">set</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set data to existing branch.</p>
+<dl>
+<dt>Args:</dt><dd><p>nodepath(Nodename): Nodename for set target.</p>
+<dl class="simple">
+<dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ChildBranch.setdefault">
+<code class="sig-name descname"><span class="pre">setdefault</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ChildBranch.setdefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ChildBranch.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new data to target DictBranch if not exists.</p>
+<p>Keep current data if already exists.”</p>
+<dl>
+<dt>Args:</dt><dd><p>nodepath_string(str): XPath format search string.</p>
+<dl class="simple">
+<dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>LocationPath or None: LocationPath of new branch.</dt><dd><p>Return None if target nodename already exist.</p>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Must be implemented for DictBranch only.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -318,7 +519,7 @@ different for all branch types.</p>
 <dl class="py class">
 <dt id="diffjson.branch.DictBranch">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">DictBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#DictBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.DictBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.Branch" title="diffjson.branch.Branch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.Branch</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.ChildBranch" title="diffjson.branch.ChildBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.ChildBranch</span></code></a></p>
 <p>Class for node data in json data tree.</p>
 <dl class="py method">
 <dt id="diffjson.branch.DictBranch.dump">
@@ -330,16 +531,38 @@ different for all branch types.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="diffjson.branch.DictBranch.setdefault">
+<code class="sig-name descname"><span class="pre">setdefault</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#DictBranch.setdefault"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.DictBranch.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new data to target DictBranch if not exists.</p>
+<p>Keep current data if already exists.”</p>
+<dl>
+<dt>Args:</dt><dd><p>nodepath_string(str): XPath format search string.</p>
+<dl class="simple">
+<dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>LocationPath or None: LocationPath of new branch.</dt><dd><p>Return None if target nodename already exist.</p>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Must be implemented for DictBranch only.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt id="diffjson.branch.Leaf">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">Leaf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#Leaf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.Leaf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.Branch" title="diffjson.branch.Branch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.Branch</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.ChildBranch" title="diffjson.branch.ChildBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.ChildBranch</span></code></a></p>
 <p>Class for edge node in json data tree.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>data(any json edge data): Edge data.
-parent(Branch): Parent branch of this leaf.</p>
+parent(ChildBranch): Parent branch of this leaf.</p>
 </dd>
 <dt>Attributes:</dt><dd><p>data(str or int or float or bool): Edge value.</p>
 </dd>
@@ -359,7 +582,7 @@ parent(Branch): Parent branch of this leaf.</p>
 <dl class="py class">
 <dt id="diffjson.branch.ListBranch">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">ListBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ListBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ListBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.Branch" title="diffjson.branch.Branch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.Branch</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.ChildBranch" title="diffjson.branch.ChildBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.ChildBranch</span></code></a></p>
 <p>Class for List type branch.</p>
 <dl class="py method">
 <dt id="diffjson.branch.ListBranch.dump">
@@ -371,12 +594,38 @@ parent(Branch): Parent branch of this leaf.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="diffjson.branch.ListBranch.insert">
+<code class="sig-name descname"><span class="pre">insert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ListBranch.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ListBranch.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert new data to target DictBranch.</p>
+<dl>
+<dt>Args:</dt><dd><p>nodepath_string(str): XPath format search string.</p>
+<dl class="simple">
+<dt>data(any json data): Json format data under current branch.</dt><dd><p>dict, list, str, int, float, bool</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>LocationPath or None: LocationPath of new branch.</dt><dd><p>Return None if target nodename already exist.</p>
+</dd>
+</dl>
+</dd>
+<dt>Note:</dt><dd><p>Must be implemented for ListBranch only.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.ListBranch.raw_append">
+<code class="sig-name descname"><span class="pre">raw_append</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#ListBranch.raw_append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.ListBranch.raw_append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt id="diffjson.branch.NullBranch">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">NullBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#NullBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.NullBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.Branch" title="diffjson.branch.Branch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.Branch</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.ChildBranch" title="diffjson.branch.ChildBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.ChildBranch</span></code></a></p>
 <p>Dummy branch for not existing branch.</p>
 <dl class="py method">
 <dt id="diffjson.branch.NullBranch.dump">
@@ -393,8 +642,8 @@ parent(Branch): Parent branch of this leaf.</p>
 <dl class="py class">
 <dt id="diffjson.branch.RootBranch">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.branch.</span></code><code class="sig-name descname"><span class="pre">RootBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.Branch" title="diffjson.branch.Branch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.Branch</span></code></a></p>
-<p>Class for root data in json data tree</p>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.BranchBase" title="diffjson.branch.BranchBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.BranchBase</span></code></a></p>
+<p>Class for root data in json data tree.</p>
 <dl class="simple">
 <dt>Note:</dt><dd><p>This class wraps child branches and provides methods for users.
 Have only one child branch with “/” nodename.</p>
@@ -402,7 +651,7 @@ Have only one child branch with “/” nodename.</p>
 </dl>
 <dl class="py method">
 <dt id="diffjson.branch.RootBranch.append">
-<code class="sig-name descname"><span class="pre">append</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.append" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">append</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.append" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append new data to target ListBranch.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>data(any json data): Json format data under current branch.</p>
@@ -437,6 +686,26 @@ Have only one child branch with “/” nodename.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="diffjson.branch.RootBranch.is_child">
+<code class="sig-name descname"><span class="pre">is_child</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.is_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.is_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is child or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.branch.RootBranch.is_root">
+<code class="sig-name descname"><span class="pre">is_root</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.is_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="diffjson.branch.RootBranch.locationpath">
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">locationpath</span></code><a class="headerlink" href="#diffjson.branch.RootBranch.locationpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract location Path.</p>
@@ -449,7 +718,7 @@ Have only one child branch with “/” nodename.</p>
 <dl class="py method">
 <dt id="diffjson.branch.RootBranch.pop">
 <code class="sig-name descname"><span class="pre">pop</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.pop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.pop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pop Branch.</p>
+<dd><p>Pop BranchBase.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>locationpath_string(str): XPath format search string.</p>
 </dd>
@@ -461,33 +730,11 @@ Have only one child branch with “/” nodename.</p>
 <dl class="py method">
 <dt id="diffjson.branch.RootBranch.remove">
 <code class="sig-name descname"><span class="pre">remove</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.remove" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove Branch.</p>
+<dd><p>Remove BranchBase.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>locationpath_string(str): XPath format search string.</p>
 </dd>
 <dt>Note:</dt><dd><p>Don’t delete self, only delete link from parent.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="diffjson.branch.RootBranch.search">
-<code class="sig-name descname"><span class="pre">search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/branch.html#RootBranch.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.branch.RootBranch.search" title="Permalink to this definition">¶</a></dt>
-<dd><p>Search target path and get json data list.</p>
-<dl>
-<dt>Args:</dt><dd><p>locationpath_string(str): XPath format search string.</p>
-<dl class="simple">
-<dt>details(bool): Return searched path with value,</dt><dd><p>default: False(value only).</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>list: List of json data at target path (details=False).</dt><dd><p>With details True, list of set like
-{target_path(str), dict or list at target path}.</p>
-</dd>
-</dl>
-</dd>
-<dt>Node:</dt><dd><p>This method must be implemented in RootBranch only.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -546,21 +793,31 @@ Have only one child branch with “/” nodename.</p>
 <div class="section" id="module-diffjson.diff">
 <span id="diffjson-diff-module"></span><h2>diffjson.diff module<a class="headerlink" href="#module-diffjson.diff" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="diffjson.diff.DiffBranch">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.Branch" title="diffjson.branch.Branch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.Branch</span></code></a></p>
-<p>Template Class for DiffBranches.</p>
+<dt id="diffjson.diff.DiffBranchBase">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffBranchBase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffBranchBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffBranchBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.branch.BranchBase" title="diffjson.branch.BranchBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.branch.BranchBase</span></code></a></p>
+<p>Template Class for DiffBranchBases.</p>
 <dl>
 <dt>Args:</dt><dd><p>listed_branches(list): Listed RootBranches to compare.</p>
 </dd>
-<dt>Note:</dt><dd><p>DiffBranch expand all input RootBranches to have same common branches.</p>
-<p>DiffBranches are dict style multi dimensional branches.</p>
+<dt>Note:</dt><dd><p>DiffBranchBase expand all input RootBranches to have same branches.</p>
+<p>DiffBranchBases are dict style multi dimensional branches.</p>
 <p>Use various dump and export methods to get various output data styles.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="diffjson.diff.DiffBranch.is_unchanged">
-<code class="sig-name descname"><span class="pre">is_unchanged</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffBranch.is_unchanged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffBranch.is_unchanged" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.diff.DiffBranchBase.check_predicates">
+<code class="sig-name descname"><span class="pre">check_predicates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffBranchBase.check_predicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffBranchBase.check_predicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seal predicate search.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>Raise exception when predicate is used in raw_search method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffBranchBase.is_unchanged">
+<code class="sig-name descname"><span class="pre">is_unchanged</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffBranchBase.is_unchanged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffBranchBase.is_unchanged" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check this branch and children are not changed or not.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>bool</p>
@@ -571,28 +828,80 @@ Have only one child branch with “/” nodename.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="diffjson.diff.DiffCommonBranch">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffCommonBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffCommonBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffCommonBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.diff.DiffBranch" title="diffjson.diff.DiffBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.diff.DiffBranch</span></code></a></p>
-<p>Class for standard child branch for diff branch.</p>
+<dt id="diffjson.diff.DiffChildBranch">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffChildBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffChildBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffChildBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.diff.DiffBranchBase" title="diffjson.diff.DiffBranchBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.diff.DiffBranchBase</span></code></a></p>
+<p>Class for diff child branch.</p>
+<dl class="py method">
+<dt id="diffjson.diff.DiffChildBranch.is_child">
+<code class="sig-name descname"><span class="pre">is_child</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffChildBranch.is_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffChildBranch.is_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is child or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffChildBranch.is_root">
+<code class="sig-name descname"><span class="pre">is_root</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffChildBranch.is_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffChildBranch.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="diffjson.diff.DiffMultiBranch">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffMultiBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffMultiBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffMultiBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.diff.DiffChildBranch" title="diffjson.diff.DiffChildBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.diff.DiffChildBranch</span></code></a></p>
+<p>Class for diff child branch for multi branch diff.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>listed_branches(list): Branches to compare.
-parent(DiffCommonBranch): Parent of DiffCommonBranch</p>
+parent(BranchBase): Parent of DiffMultiBranch</p>
 </dd>
-<dt>Attributes:</dt><dd><p>parent(DiffCommonBranch): Parent of DiffCommonBranch</p>
+<dt>Attributes:</dt><dd><p>parent(BranchBase): Parent of DiffMultiBranch</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="diffjson.diff.DiffCommonBranch.dump">
-<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffCommonBranch.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffCommonBranch.dump" title="Permalink to this definition">¶</a></dt>
+<dt id="diffjson.diff.DiffMultiBranch.dump">
+<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffMultiBranch.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffMultiBranch.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dump diff data.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>hide_unchanged(bool): Stop to output unchanged branch.</p>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>dict: List format diff result.</dt><dd><p>{&lt;path&gt;: [&lt;value of 1st branch&gt;, &lt;value of 2nd branch&gt;, ,,]}</p>
+<dt>Note:</dt><dd><p>For this version, dump is dump_as_structure.
+This might be reviewed.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffMultiBranch.dump_as_slice">
+<code class="sig-name descname"><span class="pre">dump_as_slice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffMultiBranch.dump_as_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffMultiBranch.dump_as_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump diff result of target branch.
+Not include children. Target branch only.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>hide_unchanged(bool, optional): Stop to output unchanged branch,</dt><dd><p>default False</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffMultiBranch.dump_as_structure">
+<code class="sig-name descname"><span class="pre">dump_as_structure</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffMultiBranch.dump_as_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffMultiBranch.dump_as_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump branch data at this branch.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>hide_unchanged(bool, optional): Stop to output unchanged branch,</dt><dd><p>default False</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>list: List of dumped data for each diffed branch.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -601,8 +910,8 @@ parent(DiffCommonBranch): Parent of DiffCommonBranch</p>
 
 <dl class="py class">
 <dt id="diffjson.diff.DiffRootBranch">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffRootBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodenamemasks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#diffjson.diff.DiffBranch" title="diffjson.diff.DiffBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.diff.DiffBranch</span></code></a></p>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffRootBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodenamemasks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.diff.DiffBranchBase" title="diffjson.diff.DiffBranchBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.diff.DiffBranchBase</span></code></a></p>
 <p>Class for root of diff branch.</p>
 <dl>
 <dt>Args:</dt><dd><p>listed_branches(list): Listed RootBranches compare.</p>
@@ -618,18 +927,33 @@ Child find it’s own mask if exist in the list.</p>
 </dl>
 <dl class="py method">
 <dt id="diffjson.diff.DiffRootBranch.dump">
-<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.dump" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dump diff data.</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>hide_unchanged(bool): Stop to output unchanged branch.</p>
+<dt>Args:</dt><dd><p><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Dump args, passed to child branches.</p>
 </dd>
 <dt>Returns:</dt><dd><dl class="simple">
 <dt>dict: List format diff result.</dt><dd><p>{&lt;path&gt;: [&lt;value of 1st branch&gt;, &lt;value of 2nd branch&gt;, ,,]}</p>
 </dd>
 </dl>
 </dd>
-<dt>Note:</dt><dd><p>Cannot inherit dump from DiffCommonBranch to ignore disturbing
+<dt>Note:</dt><dd><p>Cannot inherit dump from Branch to ignore disturbing
 hierarchical output.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffRootBranch.dump_as_table">
+<code class="sig-name descname"><span class="pre">dump_as_table</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.dump_as_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.dump_as_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump diff result as table format.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>hide_unchanged(bool, optional): Stop to output unchanged branch,</dt><dd><p>default False</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -652,13 +976,40 @@ hierarchical output.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="diffjson.diff.DiffRootBranch.is_child">
+<code class="sig-name descname"><span class="pre">is_child</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.is_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.is_child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is child or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffRootBranch.is_root">
+<code class="sig-name descname"><span class="pre">is_root</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.is_root"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="diffjson.diff.DiffRootBranch.search">
-<code class="sig-name descname"><span class="pre">search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">locationpath_string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffRootBranch.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffRootBranch.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search target path with search nodepath string.</p>
 <dl>
 <dt>Args:</dt><dd><p>locationpath_string(str): XPath format search string.</p>
 <dl class="simple">
-<dt>details(bool): Return searched path with value,</dt><dd><p>default: False(value only).</p>
+<dt>details(bool, option): Return searched path with value,</dt><dd><p>default: False(value only).</p>
+</dd>
+<dt>dump_mode(str, option): DiffTwoBranch only.</dt><dd><p>‘all’: Return all branch.
+‘added’: Return added branches, including it’s children.
+‘bulk_added’: Return root of added branches.
+‘removed’: Return removed branches, including it’s children.
+‘bulk_removed’: Return root of removed branches.
+‘changed’: Return changed branch only.</p>
 </dd>
 </dl>
 </dd>
@@ -672,39 +1023,135 @@ hierarchical output.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="diffjson.diff.PCounter">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">PCounter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reportmode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'stdout'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#PCounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.PCounter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Progress Counter.</p>
-<dl>
-<dt>Args:</dt><dd><p>total(int): Total Count.</p>
+<dt id="diffjson.diff.DiffTwoBranch">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">DiffTwoBranch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#diffjson.diff.DiffMultiBranch" title="diffjson.diff.DiffMultiBranch"><code class="xref py py-class docutils literal notranslate"><span class="pre">diffjson.diff.DiffMultiBranch</span></code></a></p>
+<p>Class for diff two branches.
+This class has some extra method only for 2 branch diff.</p>
 <dl class="simple">
-<dt>reportmode(str): Report mode. ‘stdout’ only now.</dt><dd><p>Default: ‘stdout’.</p>
+<dt>Args:</dt><dd><p>listed_branches(list): Branches to compare.
+parent(BranchBase): Parent of DiffMultiBranch</p>
 </dd>
-<dt>prefix(str): Prefix string to print progress,</dt><dd><p>Default: ‘’.</p>
-</dd>
-</dl>
-</dd>
-<dt>Attributes:</dt><dd><p>count(int): Current Count</p>
+<dt>Attributes:</dt><dd><p>parent(BranchBase): Parent of DiffMultiBranch</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="diffjson.diff.PCounter.e">
-<code class="sig-name descname"><span class="pre">e</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#PCounter.e"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.PCounter.e" title="Permalink to this definition">¶</a></dt>
-<dd><p>End counter.</p>
+<dt id="diffjson.diff.DiffTwoBranch.dump">
+<code class="sig-name descname"><span class="pre">dump</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump diff data.</p>
+<dl class="simple">
+<dt>Note:</dt><dd><p>For this version, dump is dump_as_structure.
+This might be reviewed.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="diffjson.diff.PCounter.p">
-<code class="sig-name descname"><span class="pre">p</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#PCounter.p"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.PCounter.p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report progress.</p>
+<dt id="diffjson.diff.DiffTwoBranch.dump_as_slice">
+<code class="sig-name descname"><span class="pre">dump_as_slice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.dump_as_slice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.dump_as_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump diff result of target branch.
+Not include children. Target branch only.</p>
+<dl>
+<dt>Args:</dt><dd><p>hide_unchanged(bool): Stop to output unchanged branch.</p>
+<dl class="simple">
+<dt>dump_mode(str): Select dump target.</dt><dd><p>If hide_unchanged=True, ignored.
+‘all’: Dump all branch.
+‘added’: Dump added branch. Include added root and children.
+‘bulk_added’: Dump added root branch, ignore children of them.
+‘removed’: Dump removed branch. Include added root and children.
+‘bulk_removed’: Dump removed root branch, ignore children of them.
+‘changed’: Dump changed branch only.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffTwoBranch.dump_as_structure">
+<code class="sig-name descname"><span class="pre">dump_as_structure</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hide_unchanged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.dump_as_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.dump_as_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump branch data at this branch.</p>
+<dl>
+<dt>Args:</dt><dd><p>hide_unchanged(bool): Stop to output unchanged branch.</p>
+<dl class="simple">
+<dt>dump_mode(str): Select dump target.</dt><dd><p>If hide_unchanged=True, ignored.
+‘all’: Dump all branch.
+‘added’: Dump added branch. Include added root and children.
+‘bulk_added’: Dump added root branch, ignore children of them.
+‘removed’: Dump removed branch. Include added root and children.
+‘bulk_removed’: Dump removed root branch, ignore children of them.
+‘changed’: Dump changed branch only.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffTwoBranch.is_added">
+<code class="sig-name descname"><span class="pre">is_added</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.is_added"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.is_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is added or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffTwoBranch.is_bulk_added">
+<code class="sig-name descname"><span class="pre">is_bulk_added</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.is_bulk_added"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.is_bulk_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root of added branch or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+<dt>Note:</dt><dd><p>If parent branch is added branch, this branch is not root.
+But if parent is DiffRootBranch, this branch is added root.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffTwoBranch.is_bulk_removed">
+<code class="sig-name descname"><span class="pre">is_bulk_removed</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.is_bulk_removed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.is_bulk_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch is root of removed branch or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+<dt>Note:</dt><dd><p>If parent branch is removed branch, this branch is not root.
+But if parent is DiffRootBranch, this branch is removed root.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffTwoBranch.is_changed">
+<code class="sig-name descname"><span class="pre">is_changed</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.is_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.is_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch and children are changed or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+<dt>Note:</dt><dd><p>This method is only for purely changed branch.
+No need for bulk because children of changed branch are
+added or deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="diffjson.diff.DiffTwoBranch.is_removed">
+<code class="sig-name descname"><span class="pre">is_removed</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#DiffTwoBranch.is_removed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.DiffTwoBranch.is_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this branch and children are removed or not.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt id="diffjson.diff.diff_branches">
-<code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">diff_branches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodenamemasks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#diff_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.diff_branches" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">diffjson.diff.</span></code><code class="sig-name descname"><span class="pre">diff_branches</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listed_branches</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/diffjson/diff.html#diff_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.diff.diff_branches" title="Permalink to this definition">¶</a></dt>
 <dd><p>Diff branches.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>listed_branches(list): List of branches to compare.</p>
@@ -717,69 +1164,6 @@ hierarchical output.</p>
 </div>
 <div class="section" id="module-diffjson.exceptions">
 <span id="diffjson-exceptions-module"></span><h2>diffjson.exceptions module<a class="headerlink" href="#module-diffjson.exceptions" title="Permalink to this headline">¶</a></h2>
-<dl class="py exception">
-<dt id="diffjson.exceptions.BranchDatatypeError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">BranchDatatypeError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#BranchDatatypeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.BranchDatatypeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Not json format data is inputted for Branch Init.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.BranchDedicatedMethodError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">BranchDedicatedMethodError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#BranchDedicatedMethodError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.BranchDedicatedMethodError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Dedicated method is called for unexpected Class.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.BranchRootLocationPathError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">BranchRootLocationPathError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#BranchRootLocationPathError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.BranchRootLocationPathError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Dedicated method is called for unexpected Class.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.BranchUnexpectedStructureError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">BranchUnexpectedStructureError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#BranchUnexpectedStructureError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.BranchUnexpectedStructureError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Broken branch structure.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.DiffCommonArgError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">DiffCommonArgError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#DiffCommonArgError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.DiffCommonArgError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Unexpected data for DiffBranch Init.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.DiffCommoniInvalidFunctionError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">DiffCommoniInvalidFunctionError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#DiffCommoniInvalidFunctionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.DiffCommoniInvalidFunctionError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Unexpected data for DiffBranch Init.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.DiffRootArgError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">DiffRootArgError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#DiffRootArgError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.DiffRootArgError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Unexpected data for DiffBranch Init.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.DiffRootBranchTypeError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">DiffRootBranchTypeError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#DiffRootBranchTypeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.DiffRootBranchTypeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Compared Branch has unexpected Branch.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="diffjson.exceptions.DiffRootMaskmapDuplexError">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">diffjson.exceptions.</span></code><code class="sig-name descname"><span class="pre">DiffRootMaskmapDuplexError</span></code><a class="reference internal" href="_modules/diffjson/exceptions.html#DiffRootMaskmapDuplexError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#diffjson.exceptions.DiffRootMaskmapDuplexError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Mask has duplex outputs.</p>
-</dd></dl>
-
 </div>
 <div class="section" id="module-diffjson">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-diffjson" title="Permalink to this headline">¶</a></h2>

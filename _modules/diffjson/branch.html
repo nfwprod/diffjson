@@ -151,8 +151,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for diffjson.branch</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.searchpath</span> <span class="kn">import</span> <span class="o">*</span>
+<span></span><span class="kn">from</span> <span class="nn">.exceptions_branch</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.searchpath</span> <span class="kn">import</span> <span class="p">(</span><span class="n">parse</span><span class="p">,</span>
+        <span class="n">LocationPath</span><span class="p">,</span> <span class="n">LocationStep</span><span class="p">,</span>
+        <span class="n">NodenameRoot</span><span class="p">,</span> <span class="n">NodenameAsterisk</span><span class="p">,</span> <span class="n">NodenameDescendant</span><span class="p">,</span>
+        <span class="n">NodenameParent</span><span class="p">,</span> <span class="n">NodenameSelf</span><span class="p">,</span>
+        <span class="n">NodenameKey</span><span class="p">,</span> <span class="n">NodenameIndex</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="generate_branch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.generate_branch">[docs]</a><span class="k">def</span> <span class="nf">generate_branch</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -170,7 +174,7 @@
     <span class="k">return</span> <span class="n">RootBranch</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Branch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Branch">[docs]</a><span class="k">class</span> <span class="nc">Branch</span><span class="p">():</span>
+<div class="viewcode-block" id="BranchBase"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase">[docs]</a><span class="k">class</span> <span class="nc">BranchBase</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Template Class for branch base.</span>
 <span class="sd">    All Branch and Leaf class must be inherit this class.</span>
 
@@ -178,10 +182,12 @@
 <span class="sd">      data(any json data): Json format data under current branch.</span>
 <span class="sd">                 dict, list, str, int, float, bool</span>
 
-<span class="sd">      parent(Branch): Parent branch of this branch.</span>
+<span class="sd">      parent(BranchBase): Parent branch of this branch.</span>
+
+<span class="sd">      _childbranches(dict or list): Child branches, wrapped by attributes.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">      parent(Branch): Parent branch of this branch.</span>
+<span class="sd">      parent(BranchBase): Parent branch of this branch.</span>
 
 <span class="sd">      childnodenames(list): List of NodeName for childbranches. (getter)</span>
 
@@ -196,8 +202,6 @@
 <span class="sd">      locationpath(LocationPath): LocationPath of this branch. (getter)</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">      Branch objects are wrapped with branches().</span>
-
 <span class="sd">      Not allow to access directory because data types are</span>
 <span class="sd">      different for all branch types.</span>
 
@@ -205,10 +209,10 @@
     <span class="c1"># Initialize Functions</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branches</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># For middle branches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranches</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># For Leaf</span>
 
-    <span class="k">def</span> <span class="nf">_generate_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate child branch from data.</span>
 
 <span class="sd">        Args:</span>
@@ -216,23 +220,21 @@
 <span class="sd">                     dict, list, str, int, float, bool</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          Branch: Generated from data.</span>
+<span class="sd">          BranchBase: Generated from data.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BranchDatatypeError</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">DictBranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">ListBranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))</span> <span class="ow">or</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Leaf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">BranchDatatype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">BranchDatatypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate child branches and contain it.</span>
 
 <span class="sd">        This method differs for each branch class.</span>
@@ -241,27 +243,10 @@
 <span class="sd">          data(any): Json data.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          dict: Dict of (key: Nodename, value: Branch)</span>
+<span class="sd">          dict: Dict of (key: Nodename, value: BranchBase)</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="c1"># Data Access (Wrapped methods)</span>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return child branch data like dict or list.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          item(str or int): Str for dict(DictBranch), int for list(ListBranch).</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          dict or list: dict for DictBranch, list for ListBranch.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">          Only for user interface. Not used for src code.</span>
-<span class="sd">          Implemented for DictBranch and ListBranch only.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="n">BrachDedicatedMethodError</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">childnodenames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -271,7 +256,7 @@
 <span class="sd">          list: List of branch nodenames.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -280,7 +265,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">          list: List of all child branches.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">descendants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -305,8 +290,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">rootbranch</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">rootbranch</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nodename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -323,7 +307,7 @@
             <span class="n">branch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">bnn</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">branch</span><span class="p">)</span> <span class="o">==</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">bnn</span>
-        <span class="k">raise</span> <span class="n">BranchUnexpectedStructure</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">BranchUnexpectedStructureError</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">locationpath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -333,38 +317,29 @@
 <span class="sd">          LocationPath: LocationPath of this branch.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">LocationPath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_locationsteps</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">is_root</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">LocationPath</span><span class="p">([</span><span class="n">LocationStep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodename</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodename</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_locationsteps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extract location step list.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          list: List of location steps from parent to self.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">          Wrapped by locationpath.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_locationsteps</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="n">LocationStep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodename</span><span class="p">)]</span>
+    <span class="c1"># Operation methods</span>
+<div class="viewcode-block" id="BranchBase.raw_set"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.raw_set">[docs]</a>    <span class="k">def</span> <span class="nf">raw_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">childbranch</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="n">childbranch</span></div>
 
     <span class="c1"># Data Access Functions</span>
-<div class="viewcode-block" id="Branch.childbranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Branch.childbranch">[docs]</a>    <span class="k">def</span> <span class="nf">childbranch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
+<div class="viewcode-block" id="BranchBase.childbranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.childbranch">[docs]</a>    <span class="k">def</span> <span class="nf">childbranch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return child branch with target nodename if exist</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          nodename(NodenameBase): Child nodename.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          Branch: Target Child branch.</span>
+<span class="sd">          BranchBase: Target Child branch.</span>
 <span class="sd">                  Return NullBranch if not exist.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NullBranch</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NullBranch</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="Branch.isat"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Branch.isat">[docs]</a>    <span class="k">def</span> <span class="nf">isat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_str</span><span class="p">):</span>
+<div class="viewcode-block" id="BranchBase.isat"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.isat">[docs]</a>    <span class="k">def</span> <span class="nf">isat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check this branch is at target locationpath</span>
 
 <span class="sd">        Args:</span>
@@ -391,234 +366,31 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">rootbranch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rootbranch</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">rootbranch</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">rootbranch</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">branch</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
+<div class="viewcode-block" id="BranchBase.is_root"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.is_root">[docs]</a>    <span class="k">def</span> <span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch is root or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BranchBase.is_child"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.is_child">[docs]</a>    <span class="k">def</span> <span class="nf">is_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch is child or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
     <span class="c1"># Search Functions</span>
-    <span class="k">def</span> <span class="nf">_search_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Search branches by nodename.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          nodename(NodenameBase): Search nodename.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          list: List of matched branch objects.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameAsterisk</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranches</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameDescendant</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">descendants</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameParent</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameSelf</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">nodename</span><span class="p">)]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">[]</span>
-
-    <span class="k">def</span> <span class="nf">_check_predicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicates</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check self branch matches predicates or not.</span>
-
-<span class="sd">        Args</span>
-<span class="sd">          predicates(Predicates): List of Arg objects.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          Boolean: Predicates match for the branch or not.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
-            <span class="n">locationpath</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">locationpath</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">value</span>
-
-            <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="k">break</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="nf">_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Search child branches by locationpath.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          locationpath(LocationPath): Search LocationPath</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          List: List of matched objects.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">locationstep</span> <span class="o">=</span> <span class="n">locationpath</span><span class="o">.</span><span class="n">current</span><span class="p">()</span>
-        <span class="n">nodename</span> <span class="o">=</span> <span class="n">locationstep</span><span class="o">.</span><span class="n">nodename</span>
-        <span class="n">predicates</span> <span class="o">=</span> <span class="n">locationstep</span><span class="o">.</span><span class="n">predicates</span>
-
-        <span class="c1"># Check Nodename and find candidates</span>
-        <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_candidates</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
-
-        <span class="c1"># Check predicates for candidates</span>
-        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">_check_predicates</span><span class="p">(</span><span class="n">predicates</span><span class="p">)]</span>
-
-        <span class="c1"># Search branches recursively and return.</span>
-        <span class="n">branchlocationpath</span> <span class="o">=</span> <span class="n">locationpath</span><span class="o">.</span><span class="n">branch</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">branchlocationpath</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">candidates</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">branches</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
-                <span class="n">branches</span> <span class="o">+=</span> <span class="n">candidate</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">branchlocationpath</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">branches</span>
-
-    <span class="c1"># Operation methods</span>
-    <span class="c1"># All operation methods are wrapped on RootBranch Class</span>
-    <span class="k">def</span> <span class="nf">_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set data to existing branch.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          nodepath(Nodename): Nodename for set target.</span>
-
-<span class="sd">          data(any json data): Json format data under current branch.</span>
-<span class="sd">                     dict, list, str, int, float, bool</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">nodename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add new data to target DictBranch if not exists.</span>
-
-<span class="sd">        Keep current data if already exists.&quot;</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          nodepath_string(str): XPath format search string.</span>
-
-<span class="sd">          data(any json data): Json format data under current branch.</span>
-<span class="sd">                     dict, list, str, int, float, bool</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          LocationPath or None: LocationPath of new branch.</span>
-<span class="sd">                    Return None if target nodename already exist.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">          Must be implemented for DictBranch only.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="n">BrachDedicatedMethodError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Insert new data to target DictBranch.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          nodepath_string(str): XPath format search string.</span>
-
-<span class="sd">          data(any json data): Json format data under current branch.</span>
-<span class="sd">                     dict, list, str, int, float, bool</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          LocationPath or None: LocationPath of new branch.</span>
-<span class="sd">                    Return None if target nodename already exist.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">          Must be implemented for ListBranch only.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="n">BrachDedicatedMethodError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Append new data to target DictBranch.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          data(any json data): Json format data under current branch.</span>
-<span class="sd">                     dict, list, str, int, float, bool</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          LocationPath or None: LocationPath of new branch.</span>
-<span class="sd">                    Return None if target nodename already exist.</span>
-
-<span class="sd">        Note:</span>
-<span class="sd">          Must be implemented for ListBranch only.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="n">BrachDedicatedMethodError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pop target Branch.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          nodename(NodeName): Pop Target</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          Branch</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">nodename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span>
-            <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">])</span>
-
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove target Branch.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">          nodename(NodeName): Pop Target</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">nodename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
-            <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">])</span>
-
-    <span class="c1"># Utility methods</span>
-<div class="viewcode-block" id="Branch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Branch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return json data of child branches.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">          Any json data: Dict format child branches.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="n">BrachDedicatedMethodError</span><span class="p">()</span></div>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dump</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="RootBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch">[docs]</a><span class="k">class</span> <span class="nc">RootBranch</span><span class="p">(</span><span class="n">Branch</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for root data in json data tree</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">      This class wraps child branches and provides methods for users.</span>
-<span class="sd">      Have only one child branch with &quot;/&quot; nodename.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameRoot</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">nodename</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)}</span>
-
-<div class="viewcode-block" id="RootBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">NodenameRoot</span><span class="p">())</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">locationpath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">BranchRootLocationPathError</span><span class="p">()</span>
-
-    <span class="c1"># Specific methods for RootBranch</span>
-<div class="viewcode-block" id="RootBranch.search"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BranchBase.search"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Search target path and get json data list.</span>
 
 <span class="sd">        Args:</span>
@@ -636,13 +408,148 @@
 <span class="sd">          This method must be implemented in RootBranch only.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">details</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">locationpath</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
-                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)]</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">BranchUnexpectedArgumentError</span><span class="p">()</span>
 
+        <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">locationpath</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+                  <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="BranchBase.raw_search"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.raw_search">[docs]</a>    <span class="k">def</span> <span class="nf">raw_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search child branches by locationpath.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          locationpath(LocationPath): Search LocationPath</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          List: List of matched objects.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">locationpath</span><span class="p">,</span> <span class="n">LocationPath</span><span class="p">):</span>
+            <span class="n">BranchUnexpectedArgumentError</span><span class="p">()</span>
+        <span class="n">locationstep</span> <span class="o">=</span> <span class="n">locationpath</span><span class="o">.</span><span class="n">current</span><span class="p">()</span>
+        <span class="n">nodename</span> <span class="o">=</span> <span class="n">locationstep</span><span class="o">.</span><span class="n">nodename</span>
+        <span class="n">predicates</span> <span class="o">=</span> <span class="n">locationstep</span><span class="o">.</span><span class="n">predicates</span>
+
+        <span class="c1"># Check Nodename and find candidates</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_candidates</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
+
+        <span class="c1"># Check predicates for candidates</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">check_predicates</span><span class="p">(</span><span class="n">predicates</span><span class="p">)]</span>
+
+        <span class="c1"># Search branches recursively and return.</span>
+        <span class="n">branchlocationpath</span> <span class="o">=</span> <span class="n">locationpath</span><span class="o">.</span><span class="n">branch</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">branchlocationpath</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">candidates</span>
+
+        <span class="n">branches</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="n">branches</span> <span class="o">+=</span> <span class="n">candidate</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">branchlocationpath</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">branches</span></div>
+
+    <span class="k">def</span> <span class="nf">_search_candidates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search branches by nodename.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          nodename(NodenameBase): Search nodename.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          list: List of matched branch objects.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameAsterisk</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranches</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameDescendant</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">descendants</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameParent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">NodenameSelf</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">nodename</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="BranchBase.check_predicates"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.check_predicates">[docs]</a>    <span class="k">def</span> <span class="nf">check_predicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicates</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check self branch matches predicates or not.</span>
+
+<span class="sd">        Args</span>
+<span class="sd">          predicates(Predicates): List of Arg objects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          Boolean: Predicates match for the branch or not.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">predicate</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
+            <span class="n">locationpath</span> <span class="o">=</span> <span class="n">predicate</span><span class="o">.</span><span class="n">locationpath</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">predicate</span><span class="o">.</span><span class="n">value</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="c1"># Utility methods</span>
+<div class="viewcode-block" id="BranchBase.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.BranchBase.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return json data of child branches.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          Any json data: Dict format child branches.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">BranchDedicatedMethodError</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BranchBase</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">dump</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RootBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch">[docs]</a><span class="k">class</span> <span class="nc">RootBranch</span><span class="p">(</span><span class="n">BranchBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for root data in json data tree.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">      This class wraps child branches and provides methods for users.</span>
+<span class="sd">      Have only one child branch with &quot;/&quot; nodename.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameRoot</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">nodename</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)}</span>
+
+<div class="viewcode-block" id="RootBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">NodenameRoot</span><span class="p">())</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">locationpath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">BranchRootLocationPathError</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RootBranch.is_root"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.is_root">[docs]</a>    <span class="k">def</span> <span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="RootBranch.is_child"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.is_child">[docs]</a>    <span class="k">def</span> <span class="nf">is_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="c1"># Specific methods for RootBranch</span>
 <div class="viewcode-block" id="RootBranch.set"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update existing branch.</span>
 
@@ -657,13 +564,12 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
-        <span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">parent</span>
             <span class="n">nn_or_index</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">nodename</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_set</span><span class="p">(</span><span class="n">nn_or_index</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">nn_or_index</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="p">]</span></div>
 
@@ -686,8 +592,8 @@
         <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameKey</span><span class="p">(</span><span class="n">nodename_string</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">_setdefault</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="p">]</span></div>
 
@@ -708,12 +614,12 @@
         <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">_insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="RootBranch.append"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="RootBranch.append"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Append new data to target ListBranch.</span>
 
 <span class="sd">        Args:</span>
@@ -726,13 +632,13 @@
         <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">_append</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="RootBranch.pop"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pop Branch.</span>
+        <span class="sd">&quot;&quot;&quot;Pop BranchBase.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          locationpath_string(str): XPath format search string.</span>
@@ -744,14 +650,14 @@
         <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">_pop</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">nodename</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">nodename</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="RootBranch.remove"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.RootBranch.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Remove Branch.</span>
+        <span class="sd">&quot;&quot;&quot;Remove BranchBase.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          locationpath_string(str): XPath format search string.</span>
@@ -762,86 +668,215 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
             <span class="n">parent</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">parent</span><span class="o">.</span><span class="n">_remove</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">nodename</span><span class="p">)</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">nodename</span><span class="p">)</span>
 
         <span class="k">return</span></div></div>
 
 
-<div class="viewcode-block" id="DictBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.DictBranch">[docs]</a><span class="k">class</span> <span class="nc">DictBranch</span><span class="p">(</span><span class="n">Branch</span><span class="p">):</span>
+<div class="viewcode-block" id="ChildBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch">[docs]</a><span class="k">class</span> <span class="nc">ChildBranch</span><span class="p">(</span><span class="n">BranchBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for child data in json data tree.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">      All child branch classes inherits this class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ChildBranch.is_root"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.is_root">[docs]</a>    <span class="k">def</span> <span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ChildBranch.is_child"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.is_child">[docs]</a>    <span class="k">def</span> <span class="nf">is_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return child branch data like dict or list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          item(str or int): Str for dict(DictBranch), int for list(ListBranch).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          dict or list: dict for DictBranch, list for ListBranch.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          Only for user interface. Not used for src code.</span>
+<span class="sd">          Implemented for DictBranch and ListBranch only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">BranchDedicatedMethodError</span><span class="p">()</span>
+
+    <span class="c1"># Operation methods</span>
+    <span class="c1"># All operation methods are wrapped in RootBranch Class</span>
+<div class="viewcode-block" id="ChildBranch.set"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set data to existing branch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          nodepath(Nodename): Nodename for set target.</span>
+
+<span class="sd">          data(any json data): Json format data under current branch.</span>
+<span class="sd">                     dict, list, str, int, float, bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nodename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ChildBranch.setdefault"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add new data to target DictBranch if not exists.</span>
+
+<span class="sd">        Keep current data if already exists.&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          nodepath_string(str): XPath format search string.</span>
+
+<span class="sd">          data(any json data): Json format data under current branch.</span>
+<span class="sd">                     dict, list, str, int, float, bool</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          LocationPath or None: LocationPath of new branch.</span>
+<span class="sd">                    Return None if target nodename already exist.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          Must be implemented for DictBranch only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">BranchDedicatedMethodError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ChildBranch.insert"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert new data to target DictBranch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          nodepath_string(str): XPath format search string.</span>
+
+<span class="sd">          data(any json data): Json format data under current branch.</span>
+<span class="sd">                     dict, list, str, int, float, bool</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          LocationPath or None: LocationPath of new branch.</span>
+<span class="sd">                    Return None if target nodename already exist.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          Must be implemented for ListBranch only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">BranchDedicatedMethodError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ChildBranch.append"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Append new data to target DictBranch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          data(any json data): Json format data under current branch.</span>
+<span class="sd">                     dict, list, str, int, float, bool</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          LocationPath or None: LocationPath of new branch.</span>
+<span class="sd">                    Return None if target nodename already exist.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          Must be implemented for ListBranch only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="n">BranchDedicatedMethodError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ChildBranch.pop"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.pop">[docs]</a>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pop target BranchBase.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          nodename(NodeName): Pop Target</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          BranchBase</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nodename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="ChildBranch.remove"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ChildBranch.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove target BranchBase.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          nodename(NodeName): Pop Target</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">nodename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="DictBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.DictBranch">[docs]</a><span class="k">class</span> <span class="nc">DictBranch</span><span class="p">(</span><span class="n">ChildBranch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for node data in json data tree.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="DictBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.DictBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="p">[(</span><span class="n">k</span><span class="o">.</span><span class="n">branchkey</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
-                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">branchkey</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameKey</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-            <span class="n">result</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="DictBranch.setdefault"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.DictBranch.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">nodename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameKey</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="ListBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ListBranch">[docs]</a><span class="k">class</span> <span class="nc">ListBranch</span><span class="p">(</span><span class="n">Branch</span><span class="p">):</span>
+<div class="viewcode-block" id="ListBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ListBranch">[docs]</a><span class="k">class</span> <span class="nc">ListBranch</span><span class="p">(</span><span class="n">ChildBranch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for List type branch.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="ListBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ListBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">branchkey</span><span class="p">),</span> <span class="n">v</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
-                  <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+                  <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span></div>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="n">result</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">):</span>
-            <span class="n">newindex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">)</span>
+<div class="viewcode-block" id="ListBranch.insert"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ListBranch.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">):</span>
+            <span class="n">newindex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">newindex</span> <span class="o">=</span> <span class="n">index</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">),</span> <span class="n">newindex</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">),</span> <span class="n">newindex</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
             <span class="n">fnode</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">tnode</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">tnode</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">fnode</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">tnode</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">fnode</span><span class="p">]</span>
         <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="n">newindex</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+<div class="viewcode-block" id="ListBranch.raw_append"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.ListBranch.raw_append">[docs]</a>    <span class="k">def</span> <span class="nf">raw_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">nodename</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span> <span class="o">+</span> <span class="n">LocationStep</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">nodename</span> <span class="o">=</span> <span class="n">NodenameIndex</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">nodename</span><span class="p">)</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="NullBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.NullBranch">[docs]</a><span class="k">class</span> <span class="nc">NullBranch</span><span class="p">(</span><span class="n">Branch</span><span class="p">):</span>
+<div class="viewcode-block" id="NullBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.NullBranch">[docs]</a><span class="k">class</span> <span class="nc">NullBranch</span><span class="p">(</span><span class="n">ChildBranch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Dummy branch for not existing branch.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -851,19 +886,19 @@
 <div class="viewcode-block" id="NullBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.NullBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="Leaf"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Leaf">[docs]</a><span class="k">class</span> <span class="nc">Leaf</span><span class="p">(</span><span class="n">Branch</span><span class="p">):</span>
+<div class="viewcode-block" id="Leaf"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Leaf">[docs]</a><span class="k">class</span> <span class="nc">Leaf</span><span class="p">(</span><span class="n">ChildBranch</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for edge node in json data tree.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      data(any json edge data): Edge data.</span>
-<span class="sd">      parent(Branch): Parent branch of this leaf.</span>
+<span class="sd">      parent(ChildBranch): Parent branch of this leaf.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">      data(str or int or float or bool): Edge value.</span>
@@ -876,7 +911,7 @@
 <div class="viewcode-block" id="Leaf.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.branch.Leaf.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{}</span></div>
 </pre></div>
 

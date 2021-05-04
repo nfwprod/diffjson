@@ -173,27 +173,23 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.append">append() (diffjson.branch.RootBranch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch.append">append() (diffjson.branch.ChildBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.append">(diffjson.branch.RootBranch method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.Branch">Branch (class in diffjson.branch)</a>
-</li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.LocationPath.branch">branch() (diffjson.searchpath.pathtypes.LocationPath method)</a>
-</li>
-      <li><a href="diffjson.html#diffjson.exceptions.BranchDatatypeError">BranchDatatypeError</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.exceptions.BranchDedicatedMethodError">BranchDedicatedMethodError</a>
-</li>
-      <li><a href="diffjson.html#diffjson.exceptions.BranchRootLocationPathError">BranchRootLocationPathError</a>
-</li>
-      <li><a href="diffjson.html#diffjson.exceptions.BranchUnexpectedStructureError">BranchUnexpectedStructureError</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase">BranchBase (class in diffjson.branch)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -201,13 +197,21 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.Branch.childbranch">childbranch() (diffjson.branch.Branch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.check_predicates">check_predicates() (diffjson.branch.BranchBase method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.diff.DiffBranchBase.check_predicates">(diffjson.diff.DiffBranchBase method)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.branch.Branch.childbranches">childbranches() (diffjson.branch.Branch property)</a>
+      </ul></li>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch">ChildBranch (class in diffjson.branch)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.Branch.childnodenames">childnodenames() (diffjson.branch.Branch property)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.childbranch">childbranch() (diffjson.branch.BranchBase method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.childbranches">childbranches() (diffjson.branch.BranchBase property)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.childnodenames">childnodenames() (diffjson.branch.BranchBase property)</a>
 </li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.LocationPath.current">current() (diffjson.searchpath.pathtypes.LocationPath method)</a>
 </li>
@@ -217,19 +221,15 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.Branch.descendants">descendants() (diffjson.branch.Branch property)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.descendants">descendants() (diffjson.branch.BranchBase property)</a>
 </li>
       <li><a href="diffjson.html#diffjson.branch.DictBranch">DictBranch (class in diffjson.branch)</a>
 </li>
       <li><a href="diffjson.html#diffjson.diff.diff_branches">diff_branches() (in module diffjson.diff)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.diff.DiffBranch">DiffBranch (class in diffjson.diff)</a>
+      <li><a href="diffjson.html#diffjson.diff.DiffBranchBase">DiffBranchBase (class in diffjson.diff)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.exceptions.DiffCommonArgError">DiffCommonArgError</a>
-</li>
-      <li><a href="diffjson.html#diffjson.diff.DiffCommonBranch">DiffCommonBranch (class in diffjson.diff)</a>
-</li>
-      <li><a href="diffjson.html#diffjson.exceptions.DiffCommoniInvalidFunctionError">DiffCommoniInvalidFunctionError</a>
+      <li><a href="diffjson.html#diffjson.diff.DiffChildBranch">DiffChildBranch (class in diffjson.diff)</a>
 </li>
       <li>
     diffjson
@@ -273,8 +273,6 @@
         <li><a href="diffjson.searchpath.html#module-diffjson.searchpath.exceptions">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     diffjson.searchpath.lex
 
@@ -289,6 +287,8 @@
         <li><a href="diffjson.searchpath.html#module-diffjson.searchpath.parse">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     diffjson.searchpath.pathtypes
 
@@ -296,15 +296,13 @@
         <li><a href="diffjson.searchpath.html#module-diffjson.searchpath.pathtypes">module</a>
 </li>
       </ul></li>
-      <li><a href="diffjson.html#diffjson.exceptions.DiffRootArgError">DiffRootArgError</a>
+      <li><a href="diffjson.html#diffjson.diff.DiffMultiBranch">DiffMultiBranch (class in diffjson.diff)</a>
 </li>
       <li><a href="diffjson.html#diffjson.diff.DiffRootBranch">DiffRootBranch (class in diffjson.diff)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.exceptions.DiffRootBranchTypeError">DiffRootBranchTypeError</a>
+      <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch">DiffTwoBranch (class in diffjson.diff)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.exceptions.DiffRootMaskmapDuplexError">DiffRootMaskmapDuplexError</a>
-</li>
-      <li><a href="diffjson.html#diffjson.branch.Branch.dump">dump() (diffjson.branch.Branch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.dump">dump() (diffjson.branch.BranchBase method)</a>
 
       <ul>
         <li><a href="diffjson.html#diffjson.branch.DictBranch.dump">(diffjson.branch.DictBranch method)</a>
@@ -317,20 +315,32 @@
 </li>
         <li><a href="diffjson.html#diffjson.branch.RootBranch.dump">(diffjson.branch.RootBranch method)</a>
 </li>
-        <li><a href="diffjson.html#diffjson.diff.DiffCommonBranch.dump">(diffjson.diff.DiffCommonBranch method)</a>
+        <li><a href="diffjson.html#diffjson.diff.DiffMultiBranch.dump">(diffjson.diff.DiffMultiBranch method)</a>
 </li>
         <li><a href="diffjson.html#diffjson.diff.DiffRootBranch.dump">(diffjson.diff.DiffRootBranch method)</a>
 </li>
+        <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.dump">(diffjson.diff.DiffTwoBranch method)</a>
+</li>
       </ul></li>
+      <li><a href="diffjson.html#diffjson.diff.DiffMultiBranch.dump_as_slice">dump_as_slice() (diffjson.diff.DiffMultiBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.dump_as_slice">(diffjson.diff.DiffTwoBranch method)</a>
+</li>
+      </ul></li>
+      <li><a href="diffjson.html#diffjson.diff.DiffMultiBranch.dump_as_structure">dump_as_structure() (diffjson.diff.DiffMultiBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.dump_as_structure">(diffjson.diff.DiffTwoBranch method)</a>
+</li>
+      </ul></li>
+      <li><a href="diffjson.html#diffjson.diff.DiffRootBranch.dump_as_table">dump_as_table() (diffjson.diff.DiffRootBranch method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.diff.PCounter.e">e() (diffjson.diff.PCounter method)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="diffjson.html#diffjson.diff.DiffRootBranch.export_csv">export_csv() (diffjson.diff.DiffRootBranch method)</a>
 </li>
@@ -348,13 +358,53 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.insert">insert() (diffjson.branch.RootBranch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch.insert">insert() (diffjson.branch.ChildBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.ListBranch.insert">(diffjson.branch.ListBranch method)</a>
 </li>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.insert">(diffjson.branch.RootBranch method)</a>
+</li>
+      </ul></li>
+      <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.is_added">is_added() (diffjson.diff.DiffTwoBranch method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.is_bulk_added">is_bulk_added() (diffjson.diff.DiffTwoBranch method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.is_bulk_removed">is_bulk_removed() (diffjson.diff.DiffTwoBranch method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.is_changed">is_changed() (diffjson.diff.DiffTwoBranch method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.is_child">is_child() (diffjson.branch.BranchBase method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.ChildBranch.is_child">(diffjson.branch.ChildBranch method)</a>
+</li>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.is_child">(diffjson.branch.RootBranch method)</a>
+</li>
+        <li><a href="diffjson.html#diffjson.diff.DiffChildBranch.is_child">(diffjson.diff.DiffChildBranch method)</a>
+</li>
+        <li><a href="diffjson.html#diffjson.diff.DiffRootBranch.is_child">(diffjson.diff.DiffRootBranch method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.diff.DiffBranch.is_unchanged">is_unchanged() (diffjson.diff.DiffBranch method)</a>
+      <li><a href="diffjson.html#diffjson.diff.DiffTwoBranch.is_removed">is_removed() (diffjson.diff.DiffTwoBranch method)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.branch.Branch.isat">isat() (diffjson.branch.Branch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.is_root">is_root() (diffjson.branch.BranchBase method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.ChildBranch.is_root">(diffjson.branch.ChildBranch method)</a>
+</li>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.is_root">(diffjson.branch.RootBranch method)</a>
+</li>
+        <li><a href="diffjson.html#diffjson.diff.DiffChildBranch.is_root">(diffjson.diff.DiffChildBranch method)</a>
+</li>
+        <li><a href="diffjson.html#diffjson.diff.DiffRootBranch.is_root">(diffjson.diff.DiffRootBranch method)</a>
+</li>
+      </ul></li>
+      <li><a href="diffjson.html#diffjson.diff.DiffBranchBase.is_unchanged">is_unchanged() (diffjson.diff.DiffBranchBase method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.isat">isat() (diffjson.branch.BranchBase method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -368,7 +418,7 @@
 </li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.LocationPath">LocationPath (class in diffjson.searchpath.pathtypes)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.branch.Branch.locationpath">locationpath() (diffjson.branch.Branch property)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.locationpath">locationpath() (diffjson.branch.BranchBase property)</a>
 
       <ul>
         <li><a href="diffjson.html#diffjson.branch.RootBranch.locationpath">(diffjson.branch.RootBranch property)</a>
@@ -417,7 +467,7 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.Branch.nodename">nodename() (diffjson.branch.Branch property)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.nodename">nodename() (diffjson.branch.BranchBase property)</a>
 </li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.NodenameAsterisk">NodenameAsterisk (class in diffjson.searchpath.pathtypes)</a>
 </li>
@@ -447,8 +497,6 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.diff.PCounter.p">p() (diffjson.diff.PCounter method)</a>
-</li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.parse.p_error">p_error() (in module diffjson.searchpath.parse)</a>
 </li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.parse.p_indexlocationstep_index">p_indexlocationstep_index() (in module diffjson.searchpath.parse)</a>
@@ -497,10 +545,12 @@
 </li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.parse.parse">parse() (in module diffjson.searchpath.parse)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.diff.PCounter">PCounter (class in diffjson.diff)</a>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch.pop">pop() (diffjson.branch.ChildBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.pop">(diffjson.branch.RootBranch method)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.pop">pop() (diffjson.branch.RootBranch method)</a>
-</li>
+      </ul></li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.Predicate">Predicate (class in diffjson.searchpath.pathtypes)</a>
 </li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.exceptions.PredicateFormatError">PredicateFormatError</a>
@@ -515,13 +565,23 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.remove">remove() (diffjson.branch.RootBranch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.ListBranch.raw_append">raw_append() (diffjson.branch.ListBranch method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.raw_search">raw_search() (diffjson.branch.BranchBase method)</a>
+</li>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.raw_set">raw_set() (diffjson.branch.BranchBase method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch.remove">remove() (diffjson.branch.ChildBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.remove">(diffjson.branch.RootBranch method)</a>
+</li>
+      </ul></li>
       <li><a href="diffjson.html#diffjson.branch.RootBranch">RootBranch (class in diffjson.branch)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.branch.Branch.rootbranch">rootbranch() (diffjson.branch.Branch property)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.rootbranch">rootbranch() (diffjson.branch.BranchBase property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -529,20 +589,30 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.search">search() (diffjson.branch.RootBranch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.BranchBase.search">search() (diffjson.branch.BranchBase method)</a>
 
       <ul>
         <li><a href="diffjson.html#diffjson.diff.DiffRootBranch.search">(diffjson.diff.DiffRootBranch method)</a>
 </li>
       </ul></li>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.set">set() (diffjson.branch.RootBranch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch.set">set() (diffjson.branch.ChildBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.set">(diffjson.branch.RootBranch method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.LocationStep.set_predicates">set_predicates() (diffjson.searchpath.pathtypes.LocationStep method)</a>
 </li>
-      <li><a href="diffjson.html#diffjson.branch.RootBranch.setdefault">setdefault() (diffjson.branch.RootBranch method)</a>
+      <li><a href="diffjson.html#diffjson.branch.ChildBranch.setdefault">setdefault() (diffjson.branch.ChildBranch method)</a>
+
+      <ul>
+        <li><a href="diffjson.html#diffjson.branch.DictBranch.setdefault">(diffjson.branch.DictBranch method)</a>
 </li>
+        <li><a href="diffjson.html#diffjson.branch.RootBranch.setdefault">(diffjson.branch.RootBranch method)</a>
+</li>
+      </ul></li>
       <li><a href="diffjson.searchpath.html#diffjson.searchpath.pathtypes.Predicates.sorted">sorted() (diffjson.searchpath.pathtypes.Predicates method)</a>
 </li>
   </ul></td>

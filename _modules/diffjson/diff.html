@@ -153,116 +153,69 @@
   <h1>Source code for diffjson.diff</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">.exceptions_diff</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">.branch</span> <span class="kn">import</span> <span class="o">*</span>
-
-
-<span class="c1"># External Variables</span>
-<span class="n">reportmode</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<span class="c1"># Utilities</span>
-<span class="k">def</span> <span class="nf">_report</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">reportmode</span> <span class="o">==</span> <span class="s1">&#39;stdout&#39;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="PCounter"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.PCounter">[docs]</a><span class="k">class</span> <span class="nc">PCounter</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Progress Counter.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">      total(int): Total Count.</span>
-
-<span class="sd">      reportmode(str): Report mode. &#39;stdout&#39; only now.</span>
-<span class="sd">                   Default: &#39;stdout&#39;.</span>
-
-<span class="sd">      prefix(str): Prefix string to print progress,</span>
-<span class="sd">                   Default: &#39;&#39;.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">      count(int): Current Count</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">reportmode</span><span class="o">=</span><span class="s1">&#39;stdout&#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="n">total</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
-
-<div class="viewcode-block" id="PCounter.p"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.PCounter.p">[docs]</a>    <span class="k">def</span> <span class="nf">p</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Report progress.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">reportmode</span> <span class="o">==</span> <span class="s1">&#39;stdout&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="si">{}{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span></div>
-
-<div class="viewcode-block" id="PCounter.e"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.PCounter.e">[docs]</a>    <span class="k">def</span> <span class="nf">e</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;End counter.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">reportmode</span> <span class="o">==</span> <span class="s1">&#39;stdout&#39;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+<span class="kn">from</span> <span class="nn">.pcounter</span> <span class="kn">import</span> <span class="n">PCounterWrapper</span>
 
 
 <span class="c1"># Functions</span>
-<div class="viewcode-block" id="diff_branches"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.diff_branches">[docs]</a><span class="k">def</span> <span class="nf">diff_branches</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="diff_branches"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.diff_branches">[docs]</a><span class="k">def</span> <span class="nf">diff_branches</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Diff branches.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">      listed_branches(list): List of branches to compare.</span>
+<span class="sd">        Args:</span>
+<span class="sd">          listed_branches(list): List of branches to compare.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">      DiffRootBranch: Diff result.</span>
-
+<span class="sd">        Returns:</span>
+<span class="sd">          DiffRootBranch: Diff result.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">DiffRootBranch</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="o">=</span><span class="n">nodenamemasks</span><span class="p">)</span></div>
+
+    <span class="k">return</span> <span class="n">DiffRootBranch</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="o">=</span><span class="p">{})</span></div>
 
 
 <span class="k">def</span> <span class="nf">_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="n">listed_branches</span> <span class="o">=</span> <span class="p">[</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">diff_branches</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DiffRootBranch</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
 
 
 <span class="n">RootBranch</span><span class="o">.</span><span class="fm">__sub__</span> <span class="o">=</span> <span class="n">_diff</span>
 
 
 <span class="c1"># Classes</span>
-<div class="viewcode-block" id="DiffBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffBranch</span><span class="p">(</span><span class="n">Branch</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Template Class for DiffBranches.</span>
+<div class="viewcode-block" id="DiffBranchBase"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffBranchBase">[docs]</a><span class="k">class</span> <span class="nc">DiffBranchBase</span><span class="p">(</span><span class="n">BranchBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Template Class for DiffBranchBases.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      listed_branches(list): Listed RootBranches to compare.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">      DiffBranch expand all input RootBranches to have same common branches.</span>
+<span class="sd">      DiffBranchBase expand all input RootBranches to have same branches.</span>
 
-<span class="sd">      DiffBranches are dict style multi dimensional branches.</span>
+<span class="sd">      DiffBranchBases are dict style multi dimensional branches.</span>
 
 <span class="sd">      Use various dump and export methods to get various output data styles.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Override</span>
-    <span class="k">def</span> <span class="nf">_check_predicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicates</span><span class="p">):</span>
+    <span class="c1"># Seal methods.</span>
+<div class="viewcode-block" id="DiffBranchBase.check_predicates"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffBranchBase.check_predicates">[docs]</a>    <span class="k">def</span> <span class="nf">check_predicates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicates</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Seal predicate search.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          Raise exception when predicate is used in raw_search method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">predicates</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DiffCommoniInvalidFunctionError</span><span class="p">()</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_check_predicates</span><span class="p">([])</span>
+            <span class="k">raise</span> <span class="n">DiffBranchInvalidFunctionError</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">check_predicates</span><span class="p">([])</span></div>
 
-    <span class="c1"># Seal unused methods</span>
-    <span class="k">def</span> <span class="nf">_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename_string</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DiffCommoniInvalidFunctionError</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DiffBranchDatatypeError</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DiffTwoBranch</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DiffMultiBranch</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodename_string</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DiffCommoniInvalidFunctionError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DiffCommoniInvalidFunctionError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">DiffCommoniInvalidFunctionError</span><span class="p">()</span>
-
-    <span class="c1"># Additional methods for DiffBranch.</span>
+    <span class="c1"># Additional methods for DiffBranchBase.</span>
     <span class="k">def</span> <span class="nf">_is_self_unchanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check this branch is not changed or not.</span>
 <span class="sd">        Must be implemented for each branches.</span>
@@ -283,7 +236,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-<div class="viewcode-block" id="DiffBranch.is_unchanged"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffBranch.is_unchanged">[docs]</a>    <span class="k">def</span> <span class="nf">is_unchanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DiffBranchBase.is_unchanged"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffBranchBase.is_unchanged">[docs]</a>    <span class="k">def</span> <span class="nf">is_unchanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check this branch and children are not changed or not.</span>
 
 <span class="sd">        Returns:</span>
@@ -293,7 +246,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_self_unchanged</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_child_unchanged</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="DiffRootBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffRootBranch</span><span class="p">(</span><span class="n">DiffBranch</span><span class="p">):</span>
+<div class="viewcode-block" id="DiffRootBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffRootBranch</span><span class="p">(</span><span class="n">DiffBranchBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for root of diff branch.</span>
 
 <span class="sd">    Args:</span>
@@ -309,16 +262,22 @@
 <span class="sd">      Have only one child branch with &quot;/&quot; nodename.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reportmode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Only report mode must be defined first for _report</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reportmode</span> <span class="o">=</span> <span class="n">reportmode</span>
+
         <span class="c1"># Input Check</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DiffRootArgError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">DiffRootBranchArgError</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Branch</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">DiffRootArgError</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">RootBranch</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DiffRootBranchArgError</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodenamemasks</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DiffRootArgError</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">nodenamemasks</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodenamemasks</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">DiffRootBranchArgError</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nodenamemasks</span><span class="p">:</span>
+            <span class="n">nodenamemasks</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Mask branches</span>
         <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">masked_branches</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask_branches</span><span class="p">(</span>
@@ -326,9 +285,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">maskmap</span> <span class="o">=</span> <span class="n">maskmap</span>
 
         <span class="c1"># Contain data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branches</span><span class="p">(</span><span class="n">masked_branches</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">masked_branches</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranches</span><span class="p">(</span><span class="n">masked_branches</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listnum</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listed_branches</span> <span class="o">=</span> <span class="n">listed_branches</span>
+
+<div class="viewcode-block" id="DiffRootBranch.is_root"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.is_root">[docs]</a>    <span class="k">def</span> <span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DiffRootBranch.is_child"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.is_child">[docs]</a>    <span class="k">def</span> <span class="nf">is_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
     <span class="c1"># Must be implemented</span>
     <span class="k">def</span> <span class="nf">_is_self_unchanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -340,6 +306,10 @@
                 <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
+    <span class="k">def</span> <span class="nf">_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reportmode</span> <span class="o">==</span> <span class="s1">&#39;stdout&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
     <span class="c1"># Unique methods</span>
     <span class="k">def</span> <span class="nf">_mask_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Convert nodename of target branch.</span>
@@ -347,161 +317,217 @@
 <span class="sd">        Args:</span>
 <span class="sd">          listed_branches(list): Listed RootBranch.</span>
 
-<span class="sd">          nodenamemasks(dict): Dict of locationpath_string and lambda.</span>
-<span class="sd">                               At target branch, replace nodenames for</span>
-<span class="sd">                               childbranches by lambda generated string.</span>
+<span class="sd">          nodenamemasks(dict, optional):</span>
+<span class="sd">              Dict of locationpath_string and lambda.</span>
+<span class="sd">              At target branch, replace nodenames for</span>
+<span class="sd">              childbranches by lambda generated string.</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">          set: Set of Mask and Listed Masked Branches.</span>
 <span class="sd">               Mask: {&lt;locationpath_string&gt;:</span>
 <span class="sd">                        [&lt;Original Nodename for Branch 01&gt;, ...]}</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">check_nodenamemask</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
-                <span class="n">check_nodenamemask_per_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span>
+        <span class="c1"># Mask duplex target check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Mask duplex target check&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_nodenamemask</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">check_nodenamemask_per_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">):</span>
+        <span class="c1"># Parse searchpath  of nodenamestr to boost</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Generate path and mask map&#39;</span><span class="p">)</span>
+        <span class="n">pathandmasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_pathandmaskmap</span><span class="p">(</span>
+                <span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">)</span>
+
+        <span class="c1"># Mask</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Mask Listed Branches, total: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total</span><span class="p">))</span>
+        <span class="p">(</span><span class="n">masklist</span><span class="p">,</span> <span class="n">masked_branches</span><span class="p">)</span> <span class="o">=</span>\
+                <span class="bp">self</span><span class="o">.</span><span class="n">_part_mask_branches</span><span class="p">(</span>
+                        <span class="n">listed_branches</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
+
+        <span class="c1"># Arrange Maskmap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Arrange Maskmaps&#39;</span><span class="p">)</span>
+        <span class="n">maskmaps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arrange_maskmaps</span><span class="p">(</span><span class="n">masklist</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">maskmaps</span><span class="p">,</span> <span class="n">masked_branches</span><span class="p">)</span>
+
+    <span class="c1"># Internal methods for _mask_branches</span>
+    <span class="k">def</span> <span class="nf">_check_nodenamemask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_check_nodenamemask_per_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">):</span>
             <span class="n">targets</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">searchpath_str</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">nodenamemasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">searchpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">searchpath_str</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">sb</span> <span class="ow">in</span> <span class="n">branch</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">searchpath</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">searchedbranch</span> <span class="ow">in</span> <span class="n">branch</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">searchpath</span><span class="p">):</span>
                     <span class="c1"># Check same branch is targeted by other nodenamemasks</span>
-                    <span class="n">lp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sb</span><span class="o">.</span><span class="n">locationpath</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">lp</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="n">DiffRootMaskmapDuplexError</span><span class="p">(</span><span class="n">lp</span><span class="p">)</span>
-                    <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lp</span><span class="p">)</span>
+                    <span class="n">locationpath_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">searchedbranch</span><span class="o">.</span><span class="n">locationpath</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">locationpath_string</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">DiffRootBranchMaskmapDuplexError</span><span class="p">(</span>
+                                <span class="n">locationpath_string</span><span class="p">)</span>
+                    <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
 
                     <span class="c1"># Check mask target is Dict Branch or List Branch</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">sb</span><span class="p">,</span> <span class="n">DictBranch</span><span class="p">)</span> <span class="ow">or</span>
-                            <span class="nb">isinstance</span><span class="p">(</span><span class="n">sb</span><span class="p">,</span> <span class="n">ListBranch</span><span class="p">)):</span>
-                        <span class="k">raise</span> <span class="n">DiffRootBranchTypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sb</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">searchedbranch</span><span class="p">,</span>
+                                      <span class="p">(</span><span class="n">DictBranch</span><span class="p">,</span> <span class="n">ListBranch</span><span class="p">)):</span>
+                        <span class="k">raise</span> <span class="n">DiffRootBranchTypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">searchedbranch</span><span class="p">))</span>
 
                     <span class="c1"># Check duplex masked nodenames for other branches</span>
                     <span class="n">maskedbnns</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="n">sb</span><span class="o">.</span><span class="n">childbranches</span><span class="p">:</span>
-                        <span class="n">maskedbnn</span> <span class="o">=</span> <span class="n">mask</span><span class="p">(</span><span class="n">cb</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">childbranch</span> <span class="ow">in</span> <span class="n">searchedbranch</span><span class="o">.</span><span class="n">childbranches</span><span class="p">:</span>
+                        <span class="n">maskedbnn</span> <span class="o">=</span> <span class="n">mask</span><span class="p">(</span><span class="n">childbranch</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">maskedbnn</span> <span class="ow">in</span> <span class="n">maskedbnns</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="n">DiffRootMaskmapDuplexError</span><span class="p">(</span>
-                                    <span class="p">(</span><span class="n">maskedbnn</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">searchpath</span><span class="p">),</span> <span class="n">cb</span><span class="p">))</span>
+                            <span class="k">raise</span> <span class="n">DiffRootBranchMaskmapDuplexError</span><span class="p">(</span>
+                                    <span class="p">(</span><span class="n">maskedbnn</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">searchpath</span><span class="p">),</span> <span class="n">childbranch</span><span class="p">))</span>
                         <span class="n">maskedbnns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maskedbnn</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="k">def</span> <span class="nf">mask_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">):</span>
-            <span class="k">def</span> <span class="nf">recursive_copy</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">):</span>
-                <span class="n">pc</span><span class="o">.</span><span class="n">p</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
+            <span class="n">_check_nodenamemask_per_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
 
-                <span class="n">mymask</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="n">new_branch</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="n">maskmap</span> <span class="o">=</span> <span class="p">{}</span>
-
-                <span class="c1"># Find Mask for current path</span>
-                <span class="c1"># RootBranch must be passed because it has no mask</span>
-                <span class="c1"># and cause error for locationpath method.</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">RootBranch</span><span class="p">):</span>
-                    <span class="n">locationpath</span> <span class="o">=</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">locationpath</span>
-                    <span class="k">for</span> <span class="n">searchpath</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">pathandmasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="k">if</span> <span class="n">locationpath</span> <span class="o">==</span> <span class="n">searchpath</span><span class="p">:</span>
-                            <span class="n">mymask</span> <span class="o">=</span> <span class="n">mask</span>
-                            <span class="k">break</span>
-
-                <span class="c1"># Convert ListBranch to Dict Branch if masked</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">RootBranch</span><span class="p">):</span>
-                    <span class="n">new_branch</span> <span class="o">=</span> <span class="n">RootBranch</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">DictBranch</span><span class="p">):</span>
-                    <span class="n">new_branch</span> <span class="o">=</span> <span class="n">DictBranch</span><span class="p">({},</span> <span class="bp">self</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">ListBranch</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">mymask</span><span class="p">:</span>
-                        <span class="n">new_branch</span> <span class="o">=</span> <span class="n">DictBranch</span><span class="p">({},</span> <span class="bp">self</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">new_branch</span> <span class="o">=</span> <span class="n">ListBranch</span><span class="p">([],</span> <span class="bp">self</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">):</span>
-                    <span class="n">new_branch</span> <span class="o">=</span> <span class="n">Leaf</span><span class="p">(</span><span class="n">currentbranch</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">NullBranch</span><span class="p">):</span>
-                    <span class="n">new_branch</span> <span class="o">=</span> <span class="n">NullBranch</span><span class="p">()</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">DiffRootBranchTypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">))</span>
-
-                <span class="c1"># Contain Child Branches</span>
-                <span class="k">for</span> <span class="n">bnn</span> <span class="ow">in</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
-                    <span class="n">childbranch</span> <span class="o">=</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">bnn</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">mymask</span><span class="p">:</span>
-                        <span class="n">masked_bnn</span> <span class="o">=</span> <span class="n">NodenameKey</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">mymask</span><span class="p">(</span><span class="n">childbranch</span><span class="p">)))</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">masked_bnn</span> <span class="o">=</span> <span class="n">bnn</span>
-
-                    <span class="n">maskmap</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">childbranch</span><span class="o">.</span><span class="n">locationpath</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">masked_bnn</span><span class="p">)</span>
-                    <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="n">recursive_copy</span><span class="p">(</span><span class="n">childbranch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
-                    <span class="n">new_branch</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">masked_bnn</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span>
-                    <span class="n">maskmap</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-
-                <span class="c1"># Return copied branch</span>
-                <span class="k">return</span> <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">new_branch</span><span class="p">)</span>
-
-            <span class="n">pc</span> <span class="o">=</span> <span class="n">PCounter</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;//*&#39;</span><span class="p">)),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;  &#39;</span><span class="p">)</span>
-            <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">new_branch</span><span class="p">)</span> <span class="o">=</span> <span class="n">recursive_copy</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
-            <span class="n">pc</span><span class="o">.</span><span class="n">e</span><span class="p">()</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">new_branch</span><span class="p">)</span>
-
-        <span class="c1"># Mask duplex target check</span>
-        <span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Mask duplex target check&#39;</span><span class="p">)</span>
-        <span class="n">check_nodenamemask</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">)</span>
-
-        <span class="c1"># Parse searchpath  of nodenamestr to boost</span>
-        <span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Generate path and mask map&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_generate_pathandmaskmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">nodenamemasks</span><span class="p">):</span>
         <span class="n">pathandmasks</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">searchpath_str</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">nodenamemasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">searchpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">searchpath_str</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
                 <span class="n">pathandmasks</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                        <span class="nb">dict</span><span class="p">([(</span><span class="n">x</span><span class="o">.</span><span class="n">locationpath</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
-                              <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">branch</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">searchpath</span><span class="p">)]))</span>
+                        <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">locationpath</span><span class="p">:</span> <span class="n">mask</span>
+                            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">branch</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">searchpath</span><span class="p">)})</span>
+        <span class="k">return</span> <span class="n">pathandmasks</span>
 
-        <span class="c1"># Mask</span>
-        <span class="n">masked_branches</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Mask Listed Branches, total: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)))</span>
+    <span class="k">def</span> <span class="nf">_part_mask_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">):</span>
         <span class="n">masklist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">masked_branches</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">masked_branch</span><span class="p">)</span> <span class="o">=</span> <span class="n">mask_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">masked_branch</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask_branch</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
             <span class="n">masklist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maskmap</span><span class="p">)</span>
             <span class="n">masked_branches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">masked_branch</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">masklist</span><span class="p">,</span> <span class="n">masked_branches</span><span class="p">)</span>
 
-        <span class="c1"># Arrange Maskmap</span>
-        <span class="n">_report</span><span class="p">(</span><span class="s1">&#39;Arrange Maskmap&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_mask_branch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">branch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">):</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">))</span>
+        <span class="n">PCounterWrapper</span><span class="o">.</span><span class="n">init_pcounter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;  &#39;</span><span class="p">,</span> <span class="n">reportmode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reportmode</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">newbranch</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recursive_copy</span><span class="p">(</span>
+                <span class="n">branch</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
+        <span class="n">PCounterWrapper</span><span class="o">.</span><span class="n">del_pcounter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">newbranch</span><span class="p">)</span>
+
+    <span class="nd">@PCounterWrapper</span><span class="p">(</span><span class="s1">&#39;mask_branch&#39;</span><span class="p">,</span> <span class="n">is_method</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_recursive_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currentbranch</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">detect_mask</span><span class="p">(</span><span class="n">pathandmasks</span><span class="p">):</span>
+            <span class="n">mymask</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">locationpath</span> <span class="o">=</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">locationpath</span>
+            <span class="k">for</span> <span class="n">searchpath</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">pathandmasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">locationpath</span> <span class="o">==</span> <span class="n">searchpath</span><span class="p">:</span>
+                    <span class="n">mymask</span> <span class="o">=</span> <span class="n">mask</span>
+                    <span class="k">break</span>
+            <span class="k">return</span> <span class="n">mymask</span>
+
+        <span class="k">def</span> <span class="nf">generate_newbranch</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">RootBranch</span><span class="p">):</span>
+                <span class="n">newbranch</span> <span class="o">=</span> <span class="n">RootBranch</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">DictBranch</span><span class="p">):</span>
+                <span class="n">newbranch</span> <span class="o">=</span> <span class="n">DictBranch</span><span class="p">({},</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">ListBranch</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">mymask</span><span class="p">:</span>
+                    <span class="n">newbranch</span> <span class="o">=</span> <span class="n">DictBranch</span><span class="p">({},</span> <span class="n">parent</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newbranch</span> <span class="o">=</span> <span class="n">ListBranch</span><span class="p">([],</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">):</span>
+                <span class="n">newbranch</span> <span class="o">=</span> <span class="n">Leaf</span><span class="p">(</span><span class="n">currentbranch</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">NullBranch</span><span class="p">):</span>
+                <span class="n">newbranch</span> <span class="o">=</span> <span class="n">NullBranch</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">DiffRootBranchTypeError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">))</span>
+
+            <span class="k">return</span> <span class="n">newbranch</span>
+
+        <span class="c1"># Find Mask for current path</span>
+        <span class="c1"># RootBranch must be passed because it has no mask</span>
+        <span class="c1"># and cause error for locationpath method.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">RootBranch</span><span class="p">):</span>
+            <span class="n">mymask</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mymask</span> <span class="o">=</span> <span class="n">detect_mask</span><span class="p">(</span><span class="n">pathandmasks</span><span class="p">)</span>
+
+        <span class="c1"># Convert ListBranch to Dict Branch if masked</span>
+        <span class="n">newbranch</span> <span class="o">=</span> <span class="n">generate_newbranch</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+        <span class="c1"># Contain Child Branches</span>
+        <span class="n">maskmap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">bnn</span> <span class="ow">in</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">:</span>
+            <span class="n">childbranch</span> <span class="o">=</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">bnn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mymask</span><span class="p">:</span>
+                <span class="n">masked_bnn</span> <span class="o">=</span> <span class="n">NodenameKey</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">mymask</span><span class="p">(</span><span class="n">childbranch</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">masked_bnn</span> <span class="o">=</span> <span class="n">bnn</span>
+
+            <span class="n">maskmap</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">childbranch</span><span class="o">.</span><span class="n">locationpath</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">masked_bnn</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">_maskmap</span><span class="p">,</span> <span class="n">_childbranch</span><span class="p">)</span> <span class="o">=</span>\
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_recursive_copy</span><span class="p">(</span>
+                            <span class="n">childbranch</span><span class="p">,</span> <span class="n">newbranch</span><span class="p">,</span> <span class="n">pathandmasks</span><span class="p">)</span>
+            <span class="n">newbranch</span><span class="o">.</span><span class="n">raw_set</span><span class="p">(</span><span class="n">masked_bnn</span><span class="p">,</span> <span class="n">_childbranch</span><span class="p">)</span>
+            <span class="n">maskmap</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_maskmap</span><span class="p">)</span>
+
+        <span class="c1"># Return copied branch</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">maskmap</span><span class="p">,</span> <span class="n">newbranch</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_arrange_maskmaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">masklist</span><span class="p">):</span>
         <span class="n">maskmaps</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">all_maskedpath</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">masklist</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">keys</span><span class="p">()]))</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">all_maskedpath</span><span class="p">:</span>
+        <span class="n">all_maskedpath</span> <span class="o">=</span>\
+                <span class="nb">set</span><span class="p">([</span><span class="n">pname</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">masklist</span> <span class="k">for</span> <span class="n">pname</span> <span class="ow">in</span> <span class="n">mask</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="k">for</span> <span class="n">pname</span> <span class="ow">in</span> <span class="n">all_maskedpath</span><span class="p">:</span>
             <span class="n">listed_bnn</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">maskmap</span> <span class="ow">in</span> <span class="n">masklist</span><span class="p">:</span>
-                <span class="n">listed_bnn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maskmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-            <span class="n">maskmaps</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">listed_bnn</span>
+                <span class="n">listed_bnn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maskmap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pname</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+            <span class="n">maskmaps</span><span class="p">[</span><span class="n">pname</span><span class="p">]</span> <span class="o">=</span> <span class="n">listed_bnn</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">maskmaps</span><span class="p">,</span> <span class="n">masked_branches</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">maskmaps</span>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate child branches.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          listed_branches(list): Child branches.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          dict: Dict of child listed branches.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          Return DiffTwoBranch for 2 branch diff.</span>
+<span class="sd">          Return DiffMultiBranch for long listed branches.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Input Check</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">RootBranch</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">DiffRootArgError</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">DiffRootBranchArgError</span><span class="p">()</span>
 
         <span class="n">listed_childbranches</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
             <span class="n">listed_childbranches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">NodenameRoot</span><span class="p">()))</span>
 
-        <span class="n">childbranch</span> <span class="o">=</span> <span class="n">DiffCommonBranch</span><span class="p">(</span><span class="n">listed_childbranches</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">childbranch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">listed_childbranches</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="p">{</span><span class="n">NodenameRoot</span><span class="p">():</span> <span class="n">childbranch</span><span class="p">}</span>
 
     <span class="c1"># Utility methods</span>
-<div class="viewcode-block" id="DiffRootBranch.search"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DiffRootBranch.search"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locationpath_string</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Search target path with search nodepath string.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          locationpath_string(str): XPath format search string.</span>
 
-<span class="sd">          details(bool): Return searched path with value,</span>
+<span class="sd">          details(bool, option): Return searched path with value,</span>
 <span class="sd">                         default: False(value only).</span>
 
+<span class="sd">          dump_mode(str, option): DiffTwoBranch only.</span>
+<span class="sd">            &#39;all&#39;: Return all branch.</span>
+<span class="sd">            &#39;added&#39;: Return added branches, including it&#39;s children.</span>
+<span class="sd">            &#39;bulk_added&#39;: Return root of added branches.</span>
+<span class="sd">            &#39;removed&#39;: Return removed branches, including it&#39;s children.</span>
+<span class="sd">            &#39;bulk_removed&#39;: Return root of removed branches.</span>
+<span class="sd">            &#39;changed&#39;: Return changed branch only.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">          dict or list: dict or list format JSON data.</span>
 
@@ -509,32 +535,71 @@
 <span class="sd">          This method must be implemented in RootBranch only.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
-        <span class="n">branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">details</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">locationpath</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">())</span>
-                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">)]</span></div>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="DiffRootBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">locationpath</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">locationpath_string</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_search</span><span class="p">(</span><span class="n">locationpath</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">branch</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">locationpath</span><span class="p">),</span> <span class="n">data</span><span class="p">))</span>
+
+        <span class="n">result</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="DiffRootBranch.dump_as_table"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.dump_as_table">[docs]</a>    <span class="k">def</span> <span class="nf">dump_as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump diff result as table format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          hide_unchanged(bool, optional): Stop to output unchanged branch,</span>
+<span class="sd">            default False</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          list</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">_recursive_dump</span><span class="p">(</span><span class="n">currentbranch</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">dump_as_slice</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">currentbranch</span><span class="o">.</span><span class="n">childbranches</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                        <span class="n">_recursive_dump</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LocationPath&#39;</span><span class="p">]</span> <span class="o">+</span>\
+                 <span class="p">[</span><span class="s1">&#39;Data</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listnum</span><span class="p">)]</span>
+
+        <span class="n">basebranch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">NodenameRoot</span><span class="p">()]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">_recursive_dump</span><span class="p">(</span><span class="n">basebranch</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="p">)</span>
+        <span class="n">sorted_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">sorted_path</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">path</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">lines</span></div>
+
+<div class="viewcode-block" id="DiffRootBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump diff data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          hide_unchanged(bool): Stop to output unchanged branch.</span>
+<span class="sd">          **kwargs: Dump args, passed to child branches.</span>
+
 
 <span class="sd">        Returns:</span>
 <span class="sd">          dict: List format diff result.</span>
 <span class="sd">                {&lt;path&gt;: [&lt;value of 1st branch&gt;, &lt;value of 2nd branch&gt;, ,,]}</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">          Cannot inherit dump from DiffCommonBranch to ignore disturbing</span>
+<span class="sd">          Cannot inherit dump from Branch to ignore disturbing</span>
 <span class="sd">          hierarchical output.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="p">[</span><span class="n">NodenameRoot</span><span class="p">()]</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
-                <span class="n">hide_unchanged</span><span class="o">=</span><span class="n">hide_unchanged</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_childbranches</span><span class="p">[</span><span class="n">NodenameRoot</span><span class="p">()]</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DiffRootBranch.export_csv"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffRootBranch.export_csv">[docs]</a>    <span class="k">def</span> <span class="nf">export_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">emphasis</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dump diff result as list format.</span>
@@ -556,55 +621,58 @@
             <span class="n">dname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dname</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Dir </span><span class="si">{}</span><span class="s1"> not exist.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dname</span><span class="p">))</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exception</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">listnum</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_listed_branches</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LocationPath&#39;</span><span class="p">]</span> <span class="o">+</span>\
-                 <span class="p">[</span><span class="s1">&#39;Data</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">listnum</span><span class="p">)]</span>
-
-        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">dumped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="o">=</span><span class="n">hide_unchanged</span><span class="p">)</span>
-        <span class="n">sorted_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dumped</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">sorted_path</span><span class="p">:</span>
-            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span> <span class="o">+</span> <span class="n">dumped</span><span class="p">[</span><span class="n">path</span><span class="p">])</span>
-
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_as_table</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">emphasis</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                         <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">([</span><span class="n">header</span><span class="p">]</span> <span class="o">+</span> <span class="n">lines</span><span class="p">)</span></div></div>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="DiffCommonBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffCommonBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffCommonBranch</span><span class="p">(</span><span class="n">DiffBranch</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for standard child branch for diff branch.</span>
+<div class="viewcode-block" id="DiffChildBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffChildBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffChildBranch</span><span class="p">(</span><span class="n">DiffBranchBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for diff child branch.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DiffChildBranch.is_root"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffChildBranch.is_root">[docs]</a>    <span class="k">def</span> <span class="nf">is_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DiffChildBranch.is_child"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffChildBranch.is_child">[docs]</a>    <span class="k">def</span> <span class="nf">is_child</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="DiffMultiBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffMultiBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffMultiBranch</span><span class="p">(</span><span class="n">DiffChildBranch</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for diff child branch for multi branch diff.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      listed_branches(list): Branches to compare.</span>
-<span class="sd">      parent(DiffCommonBranch): Parent of DiffCommonBranch</span>
+<span class="sd">      parent(BranchBase): Parent of DiffMultiBranch</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">      parent(DiffCommonBranch): Parent of DiffCommonBranch</span>
+<span class="sd">      parent(BranchBase): Parent of DiffMultiBranch</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_listnum</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contain_values</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contain_branchtypes</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_branches</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listed_branches</span> <span class="o">=</span> <span class="n">listed_branches</span>
 
     <span class="c1"># Must be implemented</span>
     <span class="k">def</span> <span class="nf">_is_self_unchanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">Leaf</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_is_child_unchanged</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">childbranches</span><span class="p">:</span>
@@ -628,7 +696,7 @@
             <span class="n">branchtypes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">branch</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">branchtypes</span>
 
-    <span class="k">def</span> <span class="nf">_generate_branches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_generate_childbranches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate child branches.</span>
 
 <span class="sd">        Args:</span>
@@ -641,59 +709,242 @@
         <span class="n">branches</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Get Union child_nodenames</span>
-        <span class="n">all_bnn</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">bnn</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">listed_branches</span>
-                            <span class="k">for</span> <span class="n">bnn</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">]))</span>
+        <span class="n">all_bnn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">bnn</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">listed_branches</span>
+            <span class="k">for</span> <span class="n">bnn</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">childnodenames</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">bnn</span> <span class="ow">in</span> <span class="n">all_bnn</span><span class="p">:</span>
             <span class="n">listed_childbranches</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="n">listed_branches</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">DictBranch</span><span class="p">)</span> <span class="ow">or</span>
-                        <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">ListBranch</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="p">(</span><span class="n">DictBranch</span><span class="p">,</span> <span class="n">ListBranch</span><span class="p">)):</span>
                     <span class="n">listed_childbranches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">childbranch</span><span class="p">(</span><span class="n">bnn</span><span class="p">))</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">NullBranch</span><span class="p">):</span>
-                    <span class="n">listed_childbranches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NullBranch</span><span class="p">())</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">):</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">branch</span><span class="p">,</span> <span class="p">(</span><span class="n">NullBranch</span><span class="p">,</span> <span class="n">Leaf</span><span class="p">)):</span>
                     <span class="n">listed_childbranches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NullBranch</span><span class="p">())</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">DiffCommonArgError</span><span class="p">()</span>
+                    <span class="k">raise</span> <span class="n">DiffMultiBranchArgError</span><span class="p">()</span>
 
-            <span class="n">branches</span><span class="p">[</span><span class="n">bnn</span><span class="p">]</span> <span class="o">=</span> <span class="n">DiffCommonBranch</span><span class="p">(</span><span class="n">listed_childbranches</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">branches</span><span class="p">[</span><span class="n">bnn</span><span class="p">]</span> <span class="o">=</span>\
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_generate_childbranch</span><span class="p">(</span><span class="n">listed_childbranches</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">branches</span>
 
     <span class="c1"># Utility methods</span>
-<div class="viewcode-block" id="DiffCommonBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffCommonBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Dump diff data.</span>
+<div class="viewcode-block" id="DiffMultiBranch.dump_as_slice"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffMultiBranch.dump_as_slice">[docs]</a>    <span class="k">def</span> <span class="nf">dump_as_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump diff result of target branch.</span>
+<span class="sd">        Not include children. Target branch only.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          hide_unchanged(bool): Stop to output unchanged branch.</span>
+<span class="sd">          hide_unchanged(bool, optional): Stop to output unchanged branch,</span>
+<span class="sd">            default False</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">hide_unchanged</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_unchanged</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">current_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listnum</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">Leaf</span><span class="p">:</span>
+                <span class="n">current_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span><span class="p">):</span> <span class="n">current_data</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="DiffMultiBranch.dump_as_structure"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffMultiBranch.dump_as_structure">[docs]</a>    <span class="k">def</span> <span class="nf">dump_as_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump branch data at this branch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          hide_unchanged(bool, optional): Stop to output unchanged branch,</span>
+<span class="sd">            default False</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">          dict: List format diff result.</span>
-<span class="sd">                {&lt;path&gt;: [&lt;value of 1st branch&gt;, &lt;value of 2nd branch&gt;, ,,]}</span>
+<span class="sd">          list: List of dumped data for each diffed branch.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">hide_unchanged</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_unchanged</span><span class="p">():</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-        <span class="n">current_data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listnum</span><span class="p">):</span>
-            <span class="n">branchtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">branch</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span> <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_listed_branches</span><span class="p">]</span></div>
 
-            <span class="k">if</span> <span class="n">branchtype</span> <span class="o">==</span> <span class="n">Leaf</span><span class="p">:</span>
-                <span class="n">current_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">branchtype</span> <span class="o">==</span> <span class="n">DictBranch</span><span class="p">:</span>
-                <span class="n">current_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;DictBranch&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">branchtype</span> <span class="o">==</span> <span class="n">ListBranch</span><span class="p">:</span>
-                <span class="n">current_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ListBranch&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">branchtype</span> <span class="o">==</span> <span class="n">NullBranch</span><span class="p">:</span>
-                <span class="n">current_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;NullBranch&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="DiffMultiBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffMultiBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump diff data.</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">result</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">locationpath</span><span class="p">)]</span> <span class="o">=</span> <span class="n">current_data</span>
-        <span class="k">for</span> <span class="n">branch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branches</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">branch</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="o">=</span><span class="n">hide_unchanged</span><span class="p">))</span>
+<span class="sd">        Note:</span>
+<span class="sd">          For this version, dump is dump_as_structure.</span>
+<span class="sd">          This might be reviewed.</span>
 
-        <span class="k">return</span> <span class="n">result</span></div></div>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_as_structure</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="o">=</span><span class="n">hide_unchanged</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DiffTwoBranch"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch">[docs]</a><span class="k">class</span> <span class="nc">DiffTwoBranch</span><span class="p">(</span><span class="n">DiffMultiBranch</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for diff two branches.</span>
+<span class="sd">    This class has some extra method only for 2 branch diff.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      listed_branches(list): Branches to compare.</span>
+<span class="sd">      parent(BranchBase): Parent of DiffMultiBranch</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">      parent(BranchBase): Parent of DiffMultiBranch</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Override Methods</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DiffTwoBranchArgError</span><span class="p">(</span><span class="s1">&#39;Diff target branches must be 2.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_listed_branches</span> <span class="o">=</span> <span class="n">listed_branches</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">listed_branches</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+    <span class="c1"># Utility methods</span>
+<div class="viewcode-block" id="DiffTwoBranch.is_added"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.is_added">[docs]</a>    <span class="k">def</span> <span class="nf">is_added</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch is added or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">NullBranch</span> <span class="ow">and</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">NullBranch</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DiffTwoBranch.is_bulk_added"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.is_bulk_added">[docs]</a>    <span class="k">def</span> <span class="nf">is_bulk_added</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch is root of added branch or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          If parent branch is added branch, this branch is not root.</span>
+<span class="sd">          But if parent is DiffRootBranch, this branch is added root.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_added</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">DiffRootBranch</span><span class="p">)</span> <span class="ow">or</span>\
+               <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">is_added</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DiffTwoBranch.is_removed"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.is_removed">[docs]</a>    <span class="k">def</span> <span class="nf">is_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch and children are removed or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">NullBranch</span> <span class="ow">and</span> \
+                <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">NullBranch</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DiffTwoBranch.is_bulk_removed"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.is_bulk_removed">[docs]</a>    <span class="k">def</span> <span class="nf">is_bulk_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch is root of removed branch or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          If parent branch is removed branch, this branch is not root.</span>
+<span class="sd">          But if parent is DiffRootBranch, this branch is removed root.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_removed</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">DiffRootBranch</span><span class="p">)</span> <span class="ow">or</span>\
+               <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">is_removed</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DiffTwoBranch.is_changed"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.is_changed">[docs]</a>    <span class="k">def</span> <span class="nf">is_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this branch and children are changed or not.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          bool</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          This method is only for purely changed branch.</span>
+<span class="sd">          No need for bulk because children of changed branch are</span>
+<span class="sd">          added or deleted.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">NullBranch</span><span class="p">)</span> <span class="ow">and</span>\
+               <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">NullBranch</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branchtypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">Leaf</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_dump_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dump_mode</span><span class="p">):</span>
+        <span class="n">valid_dump_modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;added&#39;</span><span class="p">,</span> <span class="s1">&#39;bulk_added&#39;</span><span class="p">,</span> <span class="s1">&#39;removed&#39;</span><span class="p">,</span> <span class="s1">&#39;bulk_removed&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;changed&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_dump_modes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DiffTwoBranchArgError</span><span class="p">(</span>
+                    <span class="s1">&#39;dump_mode must be in </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">valid_dump_modes</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="o">==</span> <span class="s1">&#39;added&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_added</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="o">==</span> <span class="s1">&#39;bulk_added&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bulk_added</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="o">==</span> <span class="s1">&#39;removed&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_removed</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="o">==</span> <span class="s1">&#39;bulk_removed&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bulk_removed</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="o">==</span> <span class="s1">&#39;changed&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_changed</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">dump_mode</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="DiffTwoBranch.dump_as_slice"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.dump_as_slice">[docs]</a>    <span class="k">def</span> <span class="nf">dump_as_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_mode</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump diff result of target branch.</span>
+<span class="sd">        Not include children. Target branch only.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          hide_unchanged(bool): Stop to output unchanged branch.</span>
+
+<span class="sd">          dump_mode(str): Select dump target.</span>
+<span class="sd">            If hide_unchanged=True, ignored.</span>
+<span class="sd">            &#39;all&#39;: Dump all branch.</span>
+<span class="sd">            &#39;added&#39;: Dump added branch. Include added root and children.</span>
+<span class="sd">            &#39;bulk_added&#39;: Dump added root branch, ignore children of them.</span>
+<span class="sd">            &#39;removed&#39;: Dump removed branch. Include added root and children.</span>
+<span class="sd">            &#39;bulk_removed&#39;: Dump removed root branch, ignore children of them.</span>
+<span class="sd">            &#39;changed&#39;: Dump changed branch only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dump_check</span><span class="p">(</span><span class="n">dump_mode</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dump_as_slice</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DiffTwoBranch.dump_as_structure"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.dump_as_structure">[docs]</a>    <span class="k">def</span> <span class="nf">dump_as_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_mode</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump branch data at this branch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          hide_unchanged(bool): Stop to output unchanged branch.</span>
+
+<span class="sd">          dump_mode(str): Select dump target.</span>
+<span class="sd">            If hide_unchanged=True, ignored.</span>
+<span class="sd">            &#39;all&#39;: Dump all branch.</span>
+<span class="sd">            &#39;added&#39;: Dump added branch. Include added root and children.</span>
+<span class="sd">            &#39;bulk_added&#39;: Dump added root branch, ignore children of them.</span>
+<span class="sd">            &#39;removed&#39;: Dump removed branch. Include added root and children.</span>
+<span class="sd">            &#39;bulk_removed&#39;: Dump removed root branch, ignore children of them.</span>
+<span class="sd">            &#39;changed&#39;: Dump changed branch only.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dump_check</span><span class="p">(</span><span class="n">dump_mode</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dump_as_structure</span><span class="p">(</span><span class="n">hide_unchanged</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DiffTwoBranch.dump"><a class="viewcode-back" href="../../diffjson.html#diffjson.diff.DiffTwoBranch.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hide_unchanged</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_mode</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump diff data.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">          For this version, dump is dump_as_structure.</span>
+<span class="sd">          This might be reviewed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_as_structure</span><span class="p">(</span>
+                <span class="n">hide_unchanged</span><span class="o">=</span><span class="n">hide_unchanged</span><span class="p">,</span> <span class="n">dump_mode</span><span class="o">=</span><span class="n">dump_mode</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>
