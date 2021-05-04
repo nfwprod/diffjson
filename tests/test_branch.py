@@ -17,25 +17,25 @@ class TestBranch(object):
     def childbranch_01(self, original_branch):
         lp_str = '/branch01'
         lp = diffjson.parse(lp_str)
-        return original_branch._search(lp)[0]
+        return original_branch.raw_search(lp)[0]
 
     @pytest.fixture
     def childbranch_01_01(self, original_branch):
         lp_str = '/branch01/b01-01'
         lp = diffjson.parse(lp_str)
-        return original_branch._search(lp)[0]
+        return original_branch.raw_search(lp)[0]
 
     @pytest.fixture
     def childbranch_02(self, original_branch):
         lp_str = '/branch02'
         lp = diffjson.parse(lp_str)
-        return original_branch._search(lp)[0]
+        return original_branch.raw_search(lp)[0]
 
     @pytest.fixture
     def childbranch_02_01(self, original_branch):
         lp_str = '/branch02/b02-01'
         lp = diffjson.parse(lp_str)
-        return original_branch._search(lp)[0]
+        return original_branch.raw_search(lp)[0]
 
     ###########################################################
     # Functions for Development

@@ -1,3 +1,6 @@
+# Local file
+l_*
+
 # Temporarily files
 .*
 !.gitignore
