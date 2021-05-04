@@ -1,5 +1,4 @@
 import ply.lex
-from ..exceptions import *
 
 
 tokens = [
